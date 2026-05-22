@@ -4,11 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3DPrint Pro | The Future is Now (Home 2)</title>
+    <title>3DPrint Pro | Additive Command Console (Home 2)</title>
     <link rel="icon" type="image/svg+xml" href="logo-icon.svg">
-    <meta name="description"
-        content="Explore the futuristic side of 3D printing. Autonomous fleets, orbital manufacturing, and bio-synthesis.">
+    <meta name="description" content="Futuristic Manufacturing Command Console. Monitor Zero-G sintering, atomic synthesis, and parallel multi-node extrusion hubs.">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+    
     <style>
+        /* CSS Overrides for Futuristic Home 2 Command Center */
         html,
         body {
             overflow-x: hidden !important;
@@ -19,28 +23,944 @@
             box-sizing: border-box;
             min-width: 0;
         }
-    </style>
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="index.css">
-    <style>
-        /* Home 2 specific "Futuristic" overrides */
-        [data-theme="light"] body {
-            --primary: #8b5cf6;
-            --secondary: #ec4899;
-            --bg-main: #faf5ff;
+
+        /* Cyberpunk styling overrides for the main area */
+        .cyber-dark-terminal {
+            background-color: #050814 !important;
+            color: #e2e8f0 !important;
+            --primary: #00f0ff;
+            --primary-glow: rgba(0, 240, 255, 0.35);
+            --secondary: #bd00ff;
+            --secondary-glow: rgba(189, 0, 255, 0.35);
+            --accent: #ff007a;
+            --accent-glow: rgba(255, 0, 122, 0.35);
+            --border: rgba(0, 240, 255, 0.15);
+            --bg-card: rgba(13, 19, 36, 0.65);
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            font-family: 'Inter', sans-serif;
+            position: relative;
         }
 
-        body[data-theme="dark"] {
-            --primary: #a78bfa;
-            --secondary: #f472b6;
+        .cyber-dark-terminal section {
+            padding: 80px 5%;
+            position: relative;
+            z-index: 2;
         }
 
-        .futo-hero {
-            background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.1), transparent 70%),
-                url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80');
-            background-size: cover;
-            background-position: center;
+        /* Scanlines overlay */
+        .terminal-scanlines {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.12) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 10;
+            opacity: 0.3;
+        }
+
+        .terminal-grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: center center;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Neon Glows */
+        .neon-glow-cyan {
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6), 0 0 20px rgba(0, 240, 255, 0.2);
+            color: #ffffff;
+        }
+        
+        .neon-text-cyan {
+            color: #00f0ff;
+        }
+
+        .neon-text-purple {
+            color: #bd00ff;
+        }
+
+        .neon-text-pink {
+            color: #ff007a;
+        }
+
+        /* Cards and panels */
+        .terminal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .terminal-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 15px 35px rgba(0, 240, 255, 0.1), 0 0 30px rgba(0, 240, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .terminal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            opacity: 0.8;
+        }
+
+        /* Terminal Logs Console */
+        .console-box {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #03050d;
+            border: 1px solid rgba(0, 240, 255, 0.12);
+            border-radius: 10px;
+            padding: 18px;
+            font-size: 0.85rem;
+            color: #3bf68a; /* Bright neon green */
+            height: 280px;
+            overflow-y: auto;
+            line-height: 1.5;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+        }
+
+        .console-box::-webkit-scrollbar {
+            width: 6px;
+        }
+        .console-box::-webkit-scrollbar-track {
+            background: #03050d;
+        }
+        .console-box::-webkit-scrollbar-thumb {
+            background: rgba(0, 240, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .log-line {
+            margin-bottom: 6px;
+            word-break: break-all;
+        }
+
+        .log-line .prompt {
+            color: #00f0ff;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        /* Cursor animation */
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background-color: #3bf68a;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+
+        /* Hologram Styles */
+        .hologram-container {
+            position: relative;
+            width: 100%;
+            height: 360px;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.15), rgba(189, 0, 255, 0.05) 50%, transparent 75%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px dashed rgba(0, 240, 255, 0.25);
+        }
+
+        .holo-grid-plane {
+            position: absolute;
+            bottom: 20px;
+            width: 300px;
+            height: 80px;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.2) 1px, transparent 1px);
+            background-size: 20px 20px;
+            transform: perspective(150px) rotateX(70deg);
+            transform-origin: bottom center;
+            opacity: 0.6;
+            animation: wave 4s ease-in-out infinite alternate;
+        }
+
+        .holo-ring {
+            position: absolute;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 50%;
+            animation: spin-ring 15s linear infinite;
+        }
+        .holo-ring-1 {
+            width: 300px;
+            height: 300px;
+            border-top: 2px solid rgba(0, 240, 255, 0.6);
+            border-bottom: 2px solid rgba(189, 0, 255, 0.4);
+        }
+        .holo-ring-2 {
+            width: 240px;
+            height: 240px;
+            border-left: 2px dashed rgba(0, 240, 255, 0.3);
+            border-right: 2px dashed rgba(189, 0, 255, 0.5);
+            animation-duration: 8s;
+            animation-direction: reverse;
+        }
+        .holo-ring-3 {
+            width: 170px;
+            height: 170px;
+            border: 1px dotted rgba(0, 240, 255, 0.4);
+            animation-duration: 5s;
+        }
+        
+        .holo-canvas {
+            position: absolute;
+            z-index: 5;
+            width: 100%;
+            height: 100%;
+        }
+
+        @keyframes spin-ring {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Priority selector buttons */
+        .priority-btn {
+            background: rgba(13, 19, 36, 0.6);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            color: #94a3b8;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .priority-btn:hover {
+            border-color: var(--primary);
+            color: #ffffff;
+            background: rgba(0, 240, 255, 0.05);
+        }
+        .priority-btn.active {
+            background: rgba(0, 240, 255, 0.15);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+        }
+
+        /* HUD Sectors Layout */
+        .hud-console {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 24px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .hud-console {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hud-tab-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .hud-tab-item {
+            background: rgba(13, 19, 36, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+        .hud-tab-item:hover, .hud-tab-item.active {
+            background: rgba(0, 240, 255, 0.08);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.05);
+        }
+        .hud-tab-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 15%;
+            height: 70%;
+            width: 4px;
+            background: var(--primary);
+            border-radius: 0 4px 4px 0;
+            box-shadow: 0 0 10px var(--primary);
+        }
+        
+        [dir="rtl"] .hud-tab-item.active::before {
+            left: auto;
+            right: 0;
+            border-radius: 4px 0 0 4px;
+        }
+        
+        .hud-tab-index {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .hud-tab-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-align: left;
+        }
+        [dir="rtl"] .hud-tab-title {
+            text-align: right;
+        }
+
+        /* Telemetry circular and progress gauges */
+        .gauge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+        .gauge-card {
+            background: rgba(3, 7, 18, 0.6);
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+            position: relative;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .gauge-val {
+            font-family: monospace;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 10px 0;
+            letter-spacing: -0.5px;
+        }
+        .gauge-bar-bg {
+            height: 5px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        .gauge-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 1.2s cubic-bezier(0.1, 0.8, 0.25, 1);
+        }
+
+        /* Pipeline simulator elements */
+        .pipeline-stepper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 35px 0;
+            position: relative;
+            gap: 15px;
+        }
+        
+        @media (max-width: 600px) {
+            .pipeline-stepper {
+                flex-direction: column;
+                align-items: flex-start;
+                padding-left: 20px;
+            }
+            .pipeline-stepper::before {
+                top: 20px !important;
+                bottom: 20px !important;
+                left: 38px !important;
+                width: 2px !important;
+                height: auto !important;
+            }
+            .pipeline-line-progress {
+                top: 20px !important;
+                left: 38px !important;
+                width: 2px !important;
+                height: 0% !important;
+                transition: height 0.5s ease;
+            }
+            .step-node {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                text-align: left !important;
+                width: 100%;
+            }
+            [dir="rtl"] .step-node {
+                text-align: right !important;
+            }
+            .step-dot {
+                margin: 0 !important;
+            }
+        }
+
+        .pipeline-stepper::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.08);
+            z-index: 1;
+        }
+        .pipeline-line-progress {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            height: 2px;
+            background: var(--primary);
+            width: 0%;
+            z-index: 2;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px var(--primary);
+        }
+        .step-node {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            flex: 1;
+        }
+        .step-dot {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #090e1c;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            transition: all 0.3s;
+            color: #64748b;
+        }
+        .step-node.active .step-dot {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            background: #050814;
+        }
+        .step-node.completed .step-dot {
+            border-color: #10b981;
+            color: #10b981;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+            background: #050814;
+        }
+        .step-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            color: #64748b;
+        }
+        .step-node.active .step-label {
+            color: var(--primary);
+        }
+        .step-node.completed .step-label {
+            color: #10b981;
+        }
+
+        /* Particle Canvas block */
+        .sinter-canvas-container {
+            width: 100%;
+            height: 240px;
+            background: #020308;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 12px;
+            margin-top: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9);
+        }
+        .sinter-canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .laser-beam {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--primary), transparent);
+            opacity: 0;
+            pointer-events: none;
+            box-shadow: 0 0 12px var(--primary), 0 0 20px var(--primary);
+            z-index: 4;
+        }
+
+        /* Material Caps */
+        .mat-capsule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 20px;
+        }
+        .mat-capsule {
+            background: rgba(13, 19, 36, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            text-align: left;
+        }
+        
+        [dir="rtl"] .mat-capsule {
+            text-align: right;
+        }
+
+        .mat-capsule:hover {
+            border-color: rgba(189, 0, 255, 0.4);
+            background: rgba(189, 0, 255, 0.04);
+            transform: translateY(-2px);
+        }
+        .mat-capsule.active {
+            border-color: var(--secondary);
+            background: rgba(189, 0, 255, 0.08);
+            box-shadow: 0 0 20px rgba(189, 0, 255, 0.12);
+        }
+        .mat-capsule-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+        .mat-capsule-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-family: monospace;
+            background: rgba(189, 0, 255, 0.2);
+            color: #f3e8ff;
+            margin-bottom: 12px;
+        }
+
+        /* Visual dial / slider matrix */
+        .matrix-sliders {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .matrix-slider-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .matrix-slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-family: monospace;
+            color: #94a3b8;
+        }
+        .matrix-track {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+        }
+        .matrix-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.1, 0.8, 0.25, 1);
+        }
+
+        /* Fleet Cards */
+        .hub-fleet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .hub-fleet-card {
+            background: rgba(13, 19, 36, 0.6);
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            border-radius: 16px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: left;
+        }
+        
+        [dir="rtl"] .hub-fleet-card {
+            text-align: right;
+        }
+
+        .hub-fleet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .hub-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 10px #10b981;
+            display: inline-block;
+        }
+        .hub-indicator.warning {
+            background: #f59e0b;
+            box-shadow: 0 0 10px #f59e0b;
+        }
+        .hub-indicator.critical {
+            background: #ef4444;
+            box-shadow: 0 0 10px #ef4444;
+        }
+        
+        .hub-stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 6px;
+        }
+        .hub-stat-row:last-child {
+            border: none;
+            padding: 0;
+        }
+        .hub-stat-val {
+            font-family: monospace;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        /* Directional overrides */
+        [dir="rtl"] .hud-console {
+            grid-template-columns: 1fr 280px;
+        }
+        @media (max-width: 768px) {
+            [dir="rtl"] .hud-console {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        [dir="rtl"] .hud-tab-item {
+            flex-direction: row-reverse;
+        }
+        
+        [dir="rtl"] .hud-tab-item.active::before {
+            left: auto;
+            right: 0;
+            border-radius: 4px 0 0 4px;
+        }
+
+        /* Light-theme header override for Home 2's always-dark body wrapper */
+        html[data-theme="light"] header {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Light Theme overrides for cyber command console */
+        html[data-theme="light"] .cyber-dark-terminal {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+            --primary: #0891b2;
+            --primary-glow: rgba(8, 145, 178, 0.15);
+            --secondary: #7c3aed;
+            --secondary-glow: rgba(124, 58, 237, 0.15);
+            --accent: #db2777;
+            --accent-glow: rgba(219, 39, 119, 0.15);
+            --border: rgba(15, 23, 42, 0.12);
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --text-main: #0f172a;
+            --text-muted: #475569;
+        }
+
+        /* Sections backgrounds & borders */
+        html[data-theme="light"] #sectors,
+        html[data-theme="light"] #materials {
+            background: rgba(241, 245, 249, 0.6) !important;
+            border-top-color: rgba(15, 23, 42, 0.08) !important;
+        }
+
+        html[data-theme="light"] #pipeline,
+        html[data-theme="light"] #fleet-monitor {
+            border-top-color: rgba(15, 23, 42, 0.08) !important;
+        }
+
+        /* Scanlines & Grid blueprint style */
+        html[data-theme="light"] .terminal-scanlines {
+            opacity: 0.06;
+        }
+
+        html[data-theme="light"] .terminal-grid-overlay {
+            background-image: 
+                linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+        }
+
+        /* Hologram container visual adjustments */
+        html[data-theme="light"] .hologram-container {
+            background: radial-gradient(circle at 50% 50%, rgba(8, 145, 178, 0.08), rgba(124, 58, 237, 0.03) 50%, transparent 75%) !important;
+            border-color: rgba(8, 145, 178, 0.2) !important;
+        }
+
+        html[data-theme="light"] .holo-grid-plane {
+            background-image: 
+                linear-gradient(rgba(8, 145, 178, 0.25) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(8, 145, 178, 0.25) 1px, transparent 1px);
+        }
+
+        html[data-theme="light"] .holo-ring-1 {
+            border-top-color: rgba(8, 145, 178, 0.4);
+            border-bottom-color: rgba(124, 58, 237, 0.3);
+        }
+
+        html[data-theme="light"] .holo-ring-2 {
+            border-left-color: rgba(8, 145, 178, 0.2);
+            border-right-color: rgba(124, 58, 237, 0.3);
+        }
+
+        html[data-theme="light"] .holo-ring-3 {
+            border-color: rgba(8, 145, 178, 0.25);
+        }
+
+        /* Specific card target (holographic feed border override) */
+        html[data-theme="light"] .cyber-dark-terminal .terminal-card[style*="border-color"] {
+            border-color: var(--secondary-glow) !important;
+        }
+
+        /* Texts & Labels contrast */
+        html[data-theme="light"] .neon-glow-cyan {
+            text-shadow: none !important;
+            color: #0f172a !important;
+        }
+
+        html[data-theme="light"] #holo-feed-label,
+        html[data-theme="light"] #hud-sector-title,
+        html[data-theme="light"] #matrix-material-title,
+        html[data-theme="light"] .hub-fleet-card h4 {
+            color: #0f172a !important;
+        }
+
+        /* Cards shadows & hover */
+        html[data-theme="light"] .terminal-card {
+            box-shadow: 0 15px 35px rgba(15, 23, 42, 0.06);
+        }
+
+        html[data-theme="light"] .terminal-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+        }
+
+        /* Terminals & diagnostics consoles */
+        html[data-theme="light"] .console-box {
+            background-color: #f8fafc !important;
+            border-color: rgba(15, 23, 42, 0.15) !important;
+            color: #0f172a !important;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        html[data-theme="light"] #hud-diagnostics-log {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+
+        html[data-theme="light"] .console-box::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+
+        html[data-theme="light"] .console-box::-webkit-scrollbar-thumb {
+            background: rgba(15, 23, 42, 0.2);
+        }
+
+        html[data-theme="light"] .log-line .prompt {
+            color: var(--primary) !important;
+        }
+
+        html[data-theme="light"] .cursor {
+            background-color: #0f172a !important;
+        }
+
+        /* Inputs & Selects dropdowns */
+        html[data-theme="light"] .quote-select {
+            background: #f8fafc !important;
+            border-color: rgba(15, 23, 42, 0.15) !important;
+            color: #0f172a !important;
+        }
+
+        html[data-theme="light"] .priority-selector span {
+            color: var(--text-muted) !important;
+        }
+
+        html[data-theme="light"] label {
+            color: var(--text-muted) !important;
+        }
+
+        /* Priority Selector buttons */
+        html[data-theme="light"] .priority-btn {
+            background: rgba(15, 23, 42, 0.04);
+            border-color: rgba(15, 23, 42, 0.12);
+            color: #475569;
+        }
+
+        html[data-theme="light"] .priority-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(15, 23, 42, 0.02);
+        }
+
+        html[data-theme="light"] .priority-btn.active {
+            background: var(--primary-glow);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        /* HUD Tab list items styling */
+        html[data-theme="light"] .hud-tab-item {
+            background: rgba(15, 23, 42, 0.03);
+            border-color: rgba(15, 23, 42, 0.08);
+            color: var(--text-muted);
+        }
+
+        html[data-theme="light"] .hud-tab-item:hover,
+        html[data-theme="light"] .hud-tab-item.active {
+            background: var(--primary-glow) !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 15px var(--primary-glow) !important;
+        }
+
+        html[data-theme="light"] .hud-tab-item.active {
+            color: var(--text-main);
+        }
+
+        /* Stepper progress track & dot nodes */
+        html[data-theme="light"] .step-dot {
+            background: #e2e8f0;
+            border-color: rgba(15, 23, 42, 0.1);
+        }
+
+        html[data-theme="light"] .step-node.active .step-dot {
+            background: #ffffff !important;
+            border-color: var(--primary) !important;
+            color: var(--primary) !important;
+            box-shadow: 0 0 15px var(--primary-glow) !important;
+        }
+
+        html[data-theme="light"] .step-node.completed .step-dot {
+            background: #ffffff !important;
+            border-color: #10b981 !important;
+            color: #10b981 !important;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2) !important;
+        }
+
+        html[data-theme="light"] .pipeline-stepper::before {
+            background: rgba(15, 23, 42, 0.08) !important;
+        }
+
+        /* Sintering Simulator bed visualizer container */
+        html[data-theme="light"] .sinter-canvas-container {
+            background: #f8fafc !important;
+            border-color: rgba(15, 23, 42, 0.12) !important;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.03) !important;
+        }
+
+        html[data-theme="light"] #pipeline-overlay-status {
+            color: var(--primary) !important;
+            text-shadow: none !important;
+        }
+
+        /* Material Schematics Capsules */
+        html[data-theme="light"] .mat-capsule {
+            background: rgba(15, 23, 42, 0.04);
+            border-color: rgba(15, 23, 42, 0.08);
+        }
+
+        html[data-theme="light"] .mat-capsule:hover {
+            border-color: var(--secondary);
+            background: var(--secondary-glow);
+        }
+
+        html[data-theme="light"] .mat-capsule.active {
+            border-color: var(--secondary);
+            background: var(--secondary-glow);
+        }
+
+        html[data-theme="light"] .mat-capsule-name {
+            color: #0f172a;
+        }
+
+        html[data-theme="light"] .mat-capsule-tag {
+            background: var(--secondary-glow) !important;
+            color: var(--secondary) !important;
+        }
+
+        /* Custom matrix sliders */
+        html[data-theme="light"] .matrix-track {
+            background: rgba(15, 23, 42, 0.08);
+        }
+
+        html[data-theme="light"] .matrix-slider-header {
+            color: var(--text-muted) !important;
+        }
+
+        /* Telemetry circular/progress gauges */
+        html[data-theme="light"] .gauge-card {
+            background: rgba(255, 255, 255, 0.5);
+            border-color: rgba(15, 23, 42, 0.08);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.02);
+        }
+
+        html[data-theme="light"] .gauge-card div {
+            color: var(--text-muted) !important;
+        }
+
+        html[data-theme="light"] .gauge-val {
+            color: var(--primary) !important;
+        }
+
+        html[data-theme="light"] .gauge-bar-bg {
+            background: rgba(15, 23, 42, 0.08);
+        }
+
+        /* Fleet Monitor components */
+        html[data-theme="light"] .hub-fleet-card {
+            background: var(--bg-card);
+            border-color: rgba(15, 23, 42, 0.08);
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.04);
+        }
+
+        html[data-theme="light"] .hub-stat-row {
+            color: var(--text-muted) !important;
+            border-bottom-color: rgba(15, 23, 42, 0.06) !important;
+        }
+
+        html[data-theme="light"] .hub-stat-val {
+            color: #0f172a !important;
         }
     </style>
 </head>
@@ -55,10 +975,10 @@
 
         <nav>
             <div class="nav-item">
-                <a href="index.html" class="nav-link active">Home <i class="fas fa-chevron-down"></i></a>
+                <a href="#" class="nav-link active">Home <i class="fas fa-chevron-down"></i></a>
                 <div class="dropdown">
-                    <a href="index.html" class="dropdown-link">Home 1</a>
-                    <a href="home2.html" class="dropdown-link">Home 2</a>
+                    <a href="index.html" class="dropdown-link">Home 1 (Enterprise Portal)</a>
+                    <a href="home2.html" class="dropdown-link active">Home 2 (Futuristic Hub)</a>
                 </div>
             </div>
             <div class="nav-item">
@@ -96,9 +1016,9 @@
             <button class="mobile-nav-link active" onclick="toggleMobileSub('home-sub',this)">
                 Home <i class="fas fa-chevron-down"></i>
             </button>
-            <div class="mobile-sub-group" id="home-sub">
-                <a href="index.html" class="mobile-sub-link">Home 1</a>
-                <a href="home2.html" class="mobile-sub-link">Home 2</a>
+            <div class="mobile-sub-group open" id="home-sub">
+                <a href="index.html" class="mobile-sub-link">Home 1 (Enterprise Portal)</a>
+                <a href="home2.html" class="mobile-sub-link active">Home 2 (Futuristic Hub)</a>
             </div>
             <a href="about.html" class="mobile-nav-link">About</a>
             <a href="services.html" class="mobile-nav-link">Services</a>
@@ -116,126 +1036,300 @@
         </div>
     </div>
 
-    <main>
-        <!-- Futuristic Hero (Minimalist & Dynamic Theme Support) -->
-        <section class="hero"
-            style="display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 5%; min-height: 100vh; background: radial-gradient(circle at 50% 50%, var(--primary-glow), var(--bg-main)); position: relative; overflow: hidden;">
-            <!-- Subtle Animated Particles/Grids for Futuristic Look -->
-            <div
-                style="position: absolute; inset: 0; opacity: 0.05; background-image: radial-gradient(var(--primary) 1px, transparent 1px); background-size: 40px 40px;">
-            </div>
+    <!-- Main Container: Applied Cyber-Dark Override Container -->
+    <main class="cyber-dark-terminal">
+        <div class="terminal-scanlines"></div>
+        <div class="terminal-grid-overlay"></div>
 
-            <div style="z-index: 2; max-width: 1000px;">
-                <div
-                    style="display: inline-block; padding: 6px 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50px; margin-bottom: 25px;">
-                    <span
-                        style="font-size: 0.8rem; font-weight: 700; color: var(--primary); letter-spacing: 2px;">NEURAL
-                        SYNTHESIS LIVE</span>
-                </div>
-                <h1
-                    style="font-size: clamp(2.5rem, 10vw, 5.5rem); margin: 30px 0; line-height: 0.9; color: var(--text-main); font-weight: 800;">
-                    Manufacturing <br> <span
-                        style="background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Redefined</span>
-                </h1>
-                <p
-                    style="font-size: 1.5rem; color: var(--text-muted); max-width: 800px; margin: 0 auto 50px; line-height: 1.6;">
-                    The world's most advanced autonomous manufacturing network. Molecular precision meets global edge
-                    scale.</p>
-                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-                    <a href="#" class="login-btn"
-                        style="padding: 18px 45px; font-size: 1.1rem; border: none; box-shadow: 0 0 40px var(--primary-glow);">Launch
-                        Interface</a>
-                    <a href="#" class="secondary-btn">
-                        <i class="fas fa-network-wired"></i> Explore Network
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 2: Quantum Metrics -->
-        <section style="background: var(--bg-card); border-top: 1px solid var(--border);">
-            <div class="grid-3">
-                <div style="padding: 20px; border-right: 1px solid var(--border);">
-                    <h2 style="font-family: monospace; color: var(--secondary);">0.0001s</h2>
-                    <p style="text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">Slicing Latency</p>
-                </div>
-                <div style="padding: 20px; border-right: 1px solid var(--border);">
-                    <h2 style="font-family: monospace; color: var(--secondary);">100%</h2>
-                    <p style="text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">Solar Autonomy</p>
-                </div>
-                <div style="padding: 20px;">
-                    <h2 style="font-family: monospace; color: var(--secondary);">No-IP</h2>
-                    <p style="text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">Leads Data Strategy
+        <!-- Section 1: Tactical Control Center (Hero) -->
+        <section style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding-top: 120px;">
+            <div style="display: flex; gap: 40px; align-items: center; flex-wrap: wrap; width: 100%; max-width: 1200px;">
+                
+                <!-- Left: Terminal Control Panel -->
+                <div style="flex: 1.2; min-width: 320px; display: flex; flex-direction: column; gap: 20px;">
+                    <div class="cyber-badge">
+                        <span style="font-size: 0.75rem; font-weight: 800; color: var(--primary); letter-spacing: 2px;"><i class="fas fa-microchip"></i> ADDITIVE KINEMATICS ENGINE</span>
+                    </div>
+                    
+                    <h1 class="neon-glow-cyan" style="font-size: clamp(2rem, 5vw, 4rem); line-height: 1.05; font-weight: 800; font-family: 'Outfit', sans-serif;">
+                        Additive Command <br> <span style="background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Console</span>
+                    </h1>
+                    
+                    <p style="font-size: 1.1rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px;">
+                        Welcome to the edge additive synthesis interface. Monitor industrial SLS print beds, micro-molecular FDM nodes, and multi-axis bio-print networks from a single terminal.
                     </p>
+                    
+                    <!-- Boot Systems Logs Box -->
+                    <div>
+                        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; font-family: monospace;">Fabrication Diagnostics Logs</div>
+                        <div class="console-box" id="hero-terminal-log">
+                            <!-- Typewriter inserts content here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Mode Priority selector -->
+                    <div class="priority-selector" style="margin-top: 10px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-family: monospace;">
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Operational Vector Mode</span>
+                            <span id="priority-mode-label" style="color: var(--primary); font-weight: 700;">PRECISION TOLERANCE</span>
+                        </div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="priority-btn active" data-mode="precision">Precision Tolerance</button>
+                            <button class="priority-btn" data-mode="velocity">Max Velocity</button>
+                            <button class="priority-btn" data-mode="efficiency">Energy Efficiency</button>
+                            <button class="priority-btn" data-mode="bio">Bio-Synthesis</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Spinning Hologram Core -->
+                <div style="flex: 0.8; min-width: 320px; display: flex; flex-direction: column; gap: 20px;">
+                    <div class="hologram-container">
+                        <div class="holo-grid-plane"></div>
+                        <div class="holo-ring holo-ring-1"></div>
+                        <div class="holo-ring holo-ring-2"></div>
+                        <div class="holo-ring holo-ring-3"></div>
+                        <canvas class="holo-canvas" id="holo-canvas"></canvas>
+                    </div>
+                    
+                    <div class="terminal-card" style="padding: 15px 20px; text-align: center; border-color: rgba(189, 0, 255, 0.2);">
+                        <div style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace; text-transform: uppercase; margin-bottom: 4px;">HOLOGRAPHIC DIAGNOSTIC FEED</div>
+                        <div style="font-family: monospace; font-size: 0.9rem; color: #ffffff;" id="holo-feed-label">ADDITIVE ENGINE: INITIALIZING MESH...</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Section 2: HUD Sector Operations Console -->
+        <section id="sectors" style="border-top: 1px solid rgba(0, 240, 255, 0.1); background: rgba(3, 7, 18, 0.45);">
+            <div style="width: 100%; max-width: 1200px; margin: 0 auto;">
+                <span class="neon-text-cyan" style="font-family: monospace; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">HUD SECTOR REGISTERS</span>
+                <h2 style="font-size: 2.2rem; font-weight: 800; margin: 10px 0 20px; font-family: 'Outfit', sans-serif;">Fabrication Nodes</h2>
+                <p style="color: var(--text-muted); max-width: 700px; font-size: 1.05rem;">Command the synthesis nodes across our specialized physical layers. Zero-gravity laser sintering, atomic lattice deposition, bio-organic scaffold extrusion, and multi-node FDM print swarms.</p>
+                
+                <div class="hud-console">
+                    <!-- Vertical Tab List -->
+                    <div class="hud-tab-list">
+                        <div class="hud-tab-item active" data-tab="space">
+                            <span class="hud-tab-index">01</span>
+                            <div class="hud-tab-title">Zero-G Sintering <span style="font-size: 0.75rem; color: var(--primary); display: block; margin-top: 2px;">Orbital Stations</span></div>
+                        </div>
+                        <div class="hud-tab-item" data-tab="nanotech">
+                            <span class="hud-tab-index">02</span>
+                            <div class="hud-tab-title">Atomic Synthesis <span style="font-size: 0.75rem; color: var(--secondary); display: block; margin-top: 2px;">Molecular precision</span></div>
+                        </div>
+                        <div class="hud-tab-item" data-tab="medical">
+                            <span class="hud-tab-index">03</span>
+                            <div class="hud-tab-title">Bio-Scaffolds <span style="font-size: 0.75rem; color: var(--accent); display: block; margin-top: 2px;">Medical prints</span></div>
+                        </div>
+                        <div class="hud-tab-item" data-tab="fleet">
+                            <span class="hud-tab-index">04</span>
+                            <div class="hud-tab-title">Swarm Extrusion <span style="font-size: 0.75rem; color: #10b981; display: block; margin-top: 2px;">Multi-Node FDM</span></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tab Display Area -->
+                    <div class="terminal-card" style="padding: 24px;">
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 12px; margin-bottom: 20px; align-items: center;">
+                            <h4 id="hud-sector-title" style="text-transform: uppercase; letter-spacing: 1px; font-weight: 700; color: #fff; font-size: 1.1rem; font-family: 'Outfit', sans-serif;">ZERO-G SINTERING TELEMETRY</h4>
+                            <span class="hub-indicator"></span>
+                        </div>
+                        
+                        <!-- Gauge Grid -->
+                        <div class="gauge-grid">
+                            <div class="gauge-card">
+                                <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-family: monospace;">Laser Velocity</div>
+                                <div class="gauge-val" id="gauge-laser">12,500 mm/s</div>
+                                <div class="gauge-bar-bg"><div class="gauge-bar-fill" id="bar-laser" style="width: 65%;"></div></div>
+                            </div>
+                            <div class="gauge-card">
+                                <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-family: monospace;">Chamber Temp</div>
+                                <div class="gauge-val" id="gauge-temp">1,850 °C</div>
+                                <div class="gauge-bar-bg"><div class="gauge-bar-fill" id="bar-temp" style="width: 58%;"></div></div>
+                            </div>
+                            <div class="gauge-card">
+                                <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-family: monospace;">Layer Thickness</div>
+                                <div class="gauge-val" id="gauge-thickness">5 nm</div>
+                                <div class="gauge-bar-bg"><div class="gauge-bar-fill" id="bar-thickness" style="width: 12%;"></div></div>
+                            </div>
+                            <div class="gauge-card">
+                                <div style="font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; font-family: monospace;">Vacuum Level</div>
+                                <div class="gauge-val" id="gauge-vacuum">1.2e-9 Torr</div>
+                                <div class="gauge-bar-bg"><div class="gauge-bar-fill" id="bar-vacuum" style="width: 95%;"></div></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Live diagnostics box -->
+                        <div style="margin-top: 25px;">
+                            <div style="font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; font-family: monospace; display: flex; align-items: center; gap: 8px;"><i class="fas fa-terminal"></i> Sector Diagnostics Stream</div>
+                            <div class="console-box" id="hud-diagnostics-log" style="height: 140px; font-size: 0.8rem; color: #38bdf8; background: #020408;">
+                                [DIAG] Ready. Monitoring sector metrics...
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 3: Autonomous Fleet -->
-        <section id="fleet">
-            <div style="display: flex; gap: 60px; align-items: center; flex-wrap: wrap;">
-                <div style="flex: 1; min-width: 300px;">
-                    <img src="3d8.jpg"
-                        style="width: 100%; border-radius: 40px;">
-                </div>
-                <div style="flex: 1; min-width: 300px;">
-                    <span class="section-tag">Swarm Tech</span>
-                    <h2 class="section-title">Autonomous Hub Fleets</h2>
-                    <p>Our hubs are now fully uncrewed. Coordinated AI swarms manage print queues, material refills, and
-                        quality control with zero human intervention.</p>
+        <!-- Section 3: Dynamic Print Queue Pipeline Simulator -->
+        <section id="pipeline" style="border-top: 1px solid rgba(0, 240, 255, 0.1);">
+            <div style="width: 100%; max-width: 1200px; margin: 0 auto;">
+                <span class="neon-text-cyan" style="font-family: monospace; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">SYNTHESIS SIMULATOR</span>
+                <h2 style="font-size: 2.2rem; font-weight: 800; margin: 10px 0 20px; font-family: 'Outfit', sans-serif;">Print Queue Pipeline</h2>
+                <p style="color: var(--text-muted); max-width: 700px; font-size: 1.05rem;">Initialize a mock additive vector below to visualize real-time slicing calculations, vacuum sealing, and sintering laser particles sweeps.</p>
+                
+                <div class="terminal-card" style="margin-top: 30px;">
+                    <!-- Config panels -->
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 25px;">
+                        <div style="flex: 1; min-width: 220px;">
+                            <label style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #94a3b8; display: block; margin-bottom: 8px; font-family: monospace;">Target Hub Sector</label>
+                            <select class="quote-select" id="pipeline-sector" style="background: #03050d; border-color: rgba(0, 240, 255, 0.25); color: #fff; width: 100%; padding: 12px; border-radius: 8px;">
+                                <option value="space">Zero-G Sintering (Space)</option>
+                                <option value="nanotech">Atomic Synthesis (Nanotech)</option>
+                                <option value="medical">Bio-Organic Scaffolds (Medical)</option>
+                                <option value="fleet">Swarm Extrusion (Multi-Node FDM)</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1; min-width: 220px;">
+                            <label style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #94a3b8; display: block; margin-bottom: 8px; font-family: monospace;">Molecular Vector Material</label>
+                            <select class="quote-select" id="pipeline-material" style="background: #03050d; border-color: rgba(0, 240, 255, 0.25); color: #fff; width: 100%; padding: 12px; border-radius: 8px;">
+                                <option value="lattice">Nano-Lattice Matrix</option>
+                                <option value="ceramics">Bio-Ceramic Scaffold</option>
+                                <option value="polymer">Flux-Polymer Core</option>
+                                <option value="alloy">Graphene Smart-Alloy</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; align-items: flex-end; justify-content: flex-end; min-width: 220px; flex: 0.8;">
+                            <button id="initialize-pipeline-btn" class="login-btn" style="padding: 12px 30px; font-weight: 700; width: 100%; border: none; font-size: 0.95rem; cursor: pointer; box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);">
+                                <i class="fas fa-power-off"></i> INITIALIZE VECTOR
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Stepper Layout -->
+                    <div class="pipeline-stepper">
+                        <div class="pipeline-line-progress" id="pipeline-progress-line"></div>
+                        
+                        <div class="step-node" id="step-0">
+                            <div class="step-dot"><i class="fas fa-layer-group"></i></div>
+                            <div class="step-label">Geometry Slicing</div>
+                        </div>
+                        <div class="step-node" id="step-1">
+                            <div class="step-dot"><i class="fas fa-cubes"></i></div>
+                            <div class="step-label">Vacuum Chamber</div>
+                        </div>
+                        <div class="step-node" id="step-2">
+                            <div class="step-dot"><i class="fas fa-temperature-high"></i></div>
+                            <div class="step-label">Thermal Ramp</div>
+                        </div>
+                        <div class="step-node" id="step-3">
+                            <div class="step-dot"><i class="fas fa-bolt"></i></div>
+                            <div class="step-label">Laser Sintering</div>
+                        </div>
+                        <div class="step-node" id="step-4">
+                            <div class="step-dot"><i class="fas fa-paper-plane"></i></div>
+                            <div class="step-label">Vector Dispatch</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Particle Canvas Container -->
+                    <div class="sinter-canvas-container">
+                        <div class="laser-beam" id="laser-beam-indicator"></div>
+                        <div id="pipeline-overlay-status" style="position: absolute; top: 12px; left: 18px; font-family: monospace; font-size: 0.85rem; color: #00f0ff; z-index: 10; text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);">
+                            PIPELINE INITIALIZATION VECTOR: IDLE. STANDBY...
+                        </div>
+                        <canvas class="sinter-canvas" id="sinter-canvas"></canvas>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 4: Molecular Synthesis -->
-        <section id="molecular" style="background: var(--bg-card);">
-            <div class="section-head">
-                <h2 class="section-title">Beyond Filament</h2>
-                <p>We work at the molecular level, synthesizing structures with properties not found in nature.</p>
-            </div>
-            <div class="grid-3">
-                <div class="card" style="background: rgba(139, 92, 246, 0.05); border: 1px dashed var(--primary);">
-                    <h4>Nano-Lattice</h4>
-                    <p>Rigid strength at 1/100th the weight of carbon fiber.</p>
-                </div>
-                <div class="card" style="background: rgba(139, 92, 246, 0.05); border: 1px dashed var(--primary);">
-                    <h4>Bio-Ceramics</h4>
-                    <p>Ossifying materials for next-gen bone replacement.</p>
-                </div>
-                <div class="card" style="background: rgba(139, 92, 246, 0.05); border: 1px dashed var(--primary);">
-                    <h4>Flux-Polymer</h4>
-                    <p>Variable density material that changes rigidity via app.</p>
+        <!-- Section 4: Comparative Material Vector Matrix -->
+        <section id="materials" style="border-top: 1px solid rgba(0, 240, 255, 0.1); background: rgba(3, 7, 18, 0.45);">
+            <div style="width: 100%; max-width: 1200px; margin: 0 auto;">
+                <span class="neon-text-purple" style="font-family: monospace; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">MOLECULAR SCHEMATICS</span>
+                <h2 style="font-size: 2.2rem; font-weight: 800; margin: 10px 0 20px; font-family: 'Outfit', sans-serif;">Material Vector Matrix</h2>
+                <p style="color: var(--text-muted); max-width: 700px; font-size: 1.05rem;">Review the structural and chemical tolerances of our synthesized composites. Select a capsule to inspect vectors in the visual metric array.</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 35px; align-items: start;">
+                    
+                    <!-- Left: Custom Material Capsules -->
+                    <div class="mat-capsule-grid">
+                        <div class="mat-capsule active" data-mat="lattice">
+                            <span class="mat-capsule-tag">NL-9002</span>
+                            <div class="mat-capsule-name">Nano-Lattice Matrix</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Rigid crystalline mesh structured with covalent nano-carbon grids.</p>
+                        </div>
+                        <div class="mat-capsule" data-mat="ceramics">
+                            <span class="mat-capsule-tag">BC-109X</span>
+                            <div class="mat-capsule-name">Bio-Ceramics</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Ossifying calcium scaffold engineered for medical implant assimilation.</p>
+                        </div>
+                        <div class="mat-capsule" data-mat="polymer">
+                            <span class="mat-capsule-tag">FP-VAR</span>
+                            <div class="mat-capsule-name">Flux-Polymer Core</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Electro-active compound with variable density and neural frequency response.</p>
+                        </div>
+                        <div class="mat-capsule" data-mat="alloy">
+                            <span class="mat-capsule-tag">GSA-92</span>
+                            <div class="mat-capsule-name">Graphene Smart-Alloy</div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">Super-alloy with molecular graphene sheets for supreme conductivity.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Interactive Visual Metrics Sliders -->
+                    <div class="terminal-card" style="border-color: rgba(189, 0, 255, 0.2);">
+                        <div style="border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 10px; margin-bottom: 20px;">
+                            <h4 id="matrix-material-title" style="text-transform: uppercase; letter-spacing: 1px; color: #fff; font-family: 'Outfit', sans-serif;">NANO-LATTICE MATRIX</h4>
+                            <p id="matrix-material-desc" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;">Ultra-low mass crystalline matrix structured with covalent nano-carbon grids.</p>
+                        </div>
+                        
+                        <div class="matrix-sliders">
+                            <div class="matrix-slider-row">
+                                <div class="matrix-slider-header">
+                                    <span>STRENGTH TO WEIGHT VECTOR</span>
+                                    <span id="stat-val-strength" style="color: var(--secondary); font-weight: bold;">95%</span>
+                                </div>
+                                <div class="matrix-track"><div class="matrix-fill" id="slider-strength" style="width: 95%;"></div></div>
+                            </div>
+                            <div class="matrix-slider-row">
+                                <div class="matrix-slider-header">
+                                    <span>FLEXIBILITY RANGE INDEX</span>
+                                    <span id="stat-val-flex" style="color: var(--secondary); font-weight: bold;">12%</span>
+                                </div>
+                                <div class="matrix-track"><div class="matrix-fill" id="slider-flex" style="width: 12%;"></div></div>
+                            </div>
+                            <div class="matrix-slider-row">
+                                <div class="matrix-slider-header">
+                                    <span>THERMAL TOLERANCE RANGE</span>
+                                    <span id="stat-val-temp" style="color: var(--secondary); font-weight: bold;">85%</span>
+                                </div>
+                                <div class="matrix-track"><div class="matrix-fill" id="slider-temp" style="width: 85%;"></div></div>
+                            </div>
+                            <div class="matrix-slider-row">
+                                <div class="matrix-slider-header">
+                                    <span>ELECTRONIC CONDUCTIVITY</span>
+                                    <span id="stat-val-conduct" style="color: var(--secondary); font-weight: bold;">5%</span>
+                                </div>
+                                <div class="matrix-track"><div class="matrix-fill" id="slider-conduct" style="width: 5%;"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </section>
 
-        <!-- Section 5: Orbital Mfg -->
-        <section id="orbital">
-            <div
-                style="background: #000; border-radius: 40px; padding: 100px 10%; color: white; position: relative; overflow: hidden;">
-                <div
-                    style="position: absolute; right: 0; top: -10%; width: 40%; height: 120%; background: radial-gradient(circle, var(--primary), transparent 70%); opacity: 0.3; pointer-events: none;">
-                </div>
-                <h2 class="section-title" style="color: white; font-size: 3rem;">Orbital Synthesis 2027</h2>
-                <p style="font-size: 1.25rem; max-width: 600px; margin: 20px 0 40px; opacity: 0.8;">Zero-gravity enables
-                    the printing of perfect spheres and flawless crystals. Pre-booking for LEO station batches is now
-                    open.</p>
-                <a href="#" class="login-btn" style="background: var(--primary); border: none;">Go Beyond Earth</a>
-            </div>
-        </section>
-
-        <!-- Section 6: Bio-Printing -->
-        <section id="biosynthesis">
-            <div style="display: flex; gap: 60px; align-items: center; flex-wrap: wrap-reverse;">
-                <div style="flex: 1; min-width: 300px;">
-                    <span class="section-tag">Life Science</span>
-                    <h2 class="section-title">The Bio-Synthesis Frontier</h2>
-                    <p>Crafting biological architectures for research and therapeutic use. Cellular scaffolds and
-                        organoids printed on-demand.</p>
-                </div>
-                <div style="flex: 1; min-width: 300px;">
-                    <img src="3d6.webp"
-                        style="width: 100%; border-radius: 40px;">
+        <!-- Section 5: Regional Print Hubs Monitor -->
+        <section id="fleet-monitor" style="border-top: 1px solid rgba(0, 240, 255, 0.1);">
+            <div style="width: 100%; max-width: 1200px; margin: 0 auto;">
+                <span class="neon-text-cyan" style="font-family: monospace; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">LIVE FABRICATION TELEMETRY</span>
+                <h2 style="font-size: 2.2rem; font-weight: 800; margin: 10px 0 20px; font-family: 'Outfit', sans-serif;">Global Print Hubs Monitor</h2>
+                <p style="color: var(--text-muted); max-width: 700px; font-size: 1.05rem; margin-bottom: 30px;">Real-time sync with regional manufacturing clusters and industrial print queues. Operations auto-balance workload parameters dynamically across print networks.</p>
+                
+                <div class="hub-fleet-grid" id="hub-fleet-container">
+                    <!-- Hub cards will be rendered here dynamically -->
                 </div>
             </div>
         </section>
@@ -248,8 +1342,7 @@
                     <img src="logo-icon.svg" alt="3DPrint Pro" class="logo-icon">
                     <span class="logo-text">3DPrint <span class="text-accent">Pro</span></span>
                 </a>
-                <p style="color: var(--text-muted);">The world's leading luxury 3D printing agency. Crafting the
-                    impossible with precision and style.</p>
+                <p style="color: var(--text-muted);">The world's leading luxury 3D printing agency. Crafting the impossible with precision and style.</p>
             </div>
             <div class="footer-links">
                 <h4>Navigation</h4>
@@ -286,25 +1379,922 @@
         </div>
     </footer>
 
+    <!-- Global Javascript file -->
     <script src="index.js"></script>
+
+    <!-- Futuristic Terminal Code logic -->
     <script>
-        const hamburger = document.getElementById('hamburger');
-        const mobileNav = document.getElementById('mobile-nav');
-        const overlay = document.getElementById('mobile-nav-overlay');
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('open');
-            mobileNav.classList.toggle('open');
-            document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+        document.addEventListener('DOMContentLoaded', () => {
+            // Header drawer navigation elements for Home 2 specifically
+            const hamburger = document.getElementById('hamburger');
+            const mobileNav = document.getElementById('mobile-nav');
+            const overlay = document.getElementById('mobile-nav-overlay');
+            
+            if (hamburger && mobileNav) {
+                hamburger.addEventListener('click', () => {
+                    hamburger.classList.toggle('open');
+                    mobileNav.classList.toggle('open');
+                    document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+                });
+            }
+            if (overlay && mobileNav && hamburger) {
+                overlay.addEventListener('click', () => {
+                    hamburger.classList.remove('open');
+                    mobileNav.classList.remove('open');
+                    document.body.style.overflow = '';
+                });
+            }
+
+            // =============================================
+            // HERO TYPEWRITER SYSTEM LOGS
+            // =============================================
+            const terminalLog = document.getElementById('hero-terminal-log');
+            const logLines = [
+                "[BOOT] INITIALIZING KINEMATIC FABRICATOR ENGINE...",
+                "[OK] HEATER BLOCK RESISTANCE RANGE: NOMINAL (0.4 OHM)",
+                "[OK] CALIBRATING DUAL-EXTRUDER NOZZLE G-OFFSET MATRIX...",
+                "[OK] ENCLOSURE TEMPERATURE STABILIZED AT 65.0°C",
+                "[OK] DETECTING FILAMENT FEED SPOOL: PLA TOXIN-FREE CARTRIDGE LOADED",
+                "[WARN] POWDER BED IN SLS CHAMBER DETECTED AT 182°C (PREHEAT AT 95%)",
+                "[BOOT] KINEMATICS READY. COMMENCING ADDITIVE FABRICATION SCHEMATICS...",
+                "[LOG] WAITING FOR LOCAL/ORBITAL VECTOR COMMAND FEEDS..."
+            ];
+
+            let lineIndex = 0;
+            let charIndex = 0;
+            const typingSpeed = 25; // ms
+
+            function typeLog() {
+                if (lineIndex < logLines.length) {
+                    if (charIndex === 0) {
+                        const newLine = document.createElement('div');
+                        newLine.className = 'log-line';
+                        newLine.innerHTML = '<span class="prompt">></span> ';
+                        terminalLog.appendChild(newLine);
+                    }
+                    
+                    const lines = terminalLog.getElementsByClassName('log-line');
+                    const currentLine = lines[lines.length - 1];
+                    
+                    currentLine.innerHTML += logLines[lineIndex][charIndex];
+                    charIndex++;
+                    
+                    if (charIndex < logLines[lineIndex].length) {
+                        setTimeout(typeLog, typingSpeed);
+                    } else {
+                        charIndex = 0;
+                        lineIndex++;
+                        terminalLog.scrollTop = terminalLog.scrollHeight;
+                        setTimeout(typeLog, 600);
+                    }
+                } else {
+                    // Append cursor blink and start generating alerts
+                    const cursorDiv = document.createElement('span');
+                    cursorDiv.className = 'cursor';
+                    terminalLog.appendChild(cursorDiv);
+                    setInterval(generateRandomTelemetryLog, 4500);
+                }
+            }
+
+            function generateRandomTelemetryLog() {
+                const randomLogs = [
+                    "[SYS] Print bed auto-leveling complete (Mesh deviation: 0.012mm).",
+                    "[TELEM] Extruder Nozzle 1 temperature spiked to 235°C (Stabilizing).",
+                    "[TELEM] SLS high-power laser beam preheated to 1,850°C.",
+                    "[WARN] Spool tension fluctuation detected. Auto-tensioner engaged.",
+                    "[SYS] Hydrogel cell viability confirmed: 99.89% on bio-nozzle B.",
+                    "[SYS] Layer deposition counter: 482 / 1200 slices processed.",
+                    "[SYS] Real-time database sync: orders_db checked. Synchronous mesh updated."
+                ];
+                
+                const log = randomLogs[Math.floor(Math.random() * randomLogs.length)];
+                const lines = terminalLog.getElementsByClassName('log-line');
+                
+                // Remove cursor temporarily
+                const cursor = terminalLog.querySelector('.cursor');
+                if (cursor) {
+                    terminalLog.removeChild(cursor);
+                }
+                
+                const newLine = document.createElement('div');
+                newLine.className = 'log-line';
+                newLine.innerHTML = `<span class="prompt">></span> ${log}`;
+                terminalLog.appendChild(newLine);
+                
+                // Re-add cursor at end
+                const newCursor = document.createElement('span');
+                newCursor.className = 'cursor';
+                terminalLog.appendChild(newCursor);
+                
+                terminalLog.scrollTop = terminalLog.scrollHeight;
+
+                if (terminalLog.getElementsByClassName('log-line').length > 18) {
+                    terminalLog.removeChild(terminalLog.getElementsByClassName('log-line')[0]);
+                }
+            }
+
+            setTimeout(typeLog, 500);
+
+            // =============================================
+            // HOLOGRAPHIC GEOMETRIC WIREFRAME CANVAS
+            // =============================================
+            const canvas = document.getElementById('holo-canvas');
+            const ctx = canvas.getContext('2d');
+            let rotationSpeed = 0.005;
+            
+            // Helper function to resolve dynamic hologram colors based on mode and theme
+            function getHoloColorComponents(mode, isLight) {
+                if (mode === 'precision' || mode === 'velocity') {
+                    return isLight ? '8, 145, 178, ' : '0, 240, 255, ';
+                } else if (mode === 'efficiency') {
+                    return isLight ? '124, 58, 237, ' : '189, 0, 255, ';
+                } else if (mode === 'bio') {
+                    return isLight ? '219, 39, 119, ' : '255, 0, 122, ';
+                }
+                return isLight ? '8, 145, 178, ' : '0, 240, 255, ';
+            }
+
+            // 3D Vase Mesh points generator
+            const points = [];
+            const numLayers = 18;
+            const pointsPerLayer = 16;
+            for (let l = 0; l <= numLayers; l++) {
+                const h = l / numLayers;
+                const y = -1 + 2 * h; // ranges from -1 to 1 (vertical axis)
+                // Vase shape radius function
+                const r = 0.35 + 0.2 * Math.sin(h * Math.PI * 2.5) + 0.08 * Math.cos(h * Math.PI * 1.5);
+                for (let p = 0; p < pointsPerLayer; p++) {
+                    const theta = (p / pointsPerLayer) * Math.PI * 2;
+                    points.push({
+                        x: r * Math.cos(theta),
+                        y: y,
+                        z: r * Math.sin(theta),
+                        layer: l,
+                        indexInLayer: p
+                    });
+                }
+            }
+
+            let angleX = 0.3; // Initial tilt to look 3D
+            let angleY = 0.012;
+
+            function resizeCanvas() {
+                canvas.width = canvas.parentElement.clientWidth;
+                canvas.height = canvas.parentElement.clientHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            function drawHoloSphere() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+                const size = Math.min(cx, cy) * 0.7;
+                
+                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                const activeModeBtn = document.querySelector('.priority-btn.active');
+                const activeMode = activeModeBtn ? activeModeBtn.dataset.mode : 'precision';
+                const holoColor = `rgba(${getHoloColorComponents(activeMode, isLight)}`;
+                
+                // Rotate Points
+                const rotated = points.map(p => {
+                    // Rotate around Y axis
+                    let x1 = p.x * Math.cos(angleY) - p.z * Math.sin(angleY);
+                    let z1 = p.x * Math.sin(angleY) + p.z * Math.cos(angleY);
+                    
+                    // Rotate around X axis
+                    let y2 = p.y * Math.cos(angleX) - z1 * Math.sin(angleX);
+                    let z2 = p.y * Math.sin(angleX) + z1 * Math.cos(angleX);
+                    
+                    return { x: x1, y: y2, z: z2, layer: p.layer, indexInLayer: p.indexInLayer };
+                });
+                
+                // Calculate laser scan height in local coordinates
+                const scanCycle = (Date.now() / 2500) % 2; // 0 to 2
+                const localScanY = -1 + scanCycle; // -1 to 1 (sweeps bottom to top)
+                const activeLayerIndex = Math.round(((localScanY + 1) / 2) * numLayers);
+
+                // Draw horizontal rings
+                for (let l = 0; l <= numLayers; l++) {
+                    const isScanningRing = (l === activeLayerIndex);
+                    
+                    if (isScanningRing) {
+                        ctx.lineWidth = 2.5;
+                        ctx.shadowBlur = isLight ? 2 : 10;
+                        ctx.shadowColor = holoColor + '1.0)';
+                    } else {
+                        ctx.lineWidth = 1;
+                        ctx.shadowBlur = 0;
+                    }
+
+                    for (let p = 0; p < pointsPerLayer; p++) {
+                        const i1 = l * pointsPerLayer + p;
+                        const i2 = l * pointsPerLayer + ((p + 1) % pointsPerLayer);
+                        const p1 = project(rotated[i1], cx, cy, size);
+                        const p2 = project(rotated[i2], cx, cy, size);
+                        
+                        const avgZ = (rotated[i1].z + rotated[i2].z) / 2;
+                        const depthAlpha = (avgZ + 1.5) / 3; // 0..1 range
+                        
+                        if (isScanningRing) {
+                            ctx.strokeStyle = `${holoColor}1.0)`;
+                        } else {
+                            ctx.strokeStyle = `${holoColor}${Math.max(0.04, Math.min(0.8, 0.05 + depthAlpha * 0.45))})`;
+                        }
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+                
+                // Draw vertical rib lines
+                ctx.lineWidth = 1;
+                ctx.shadowBlur = 0;
+                for (let l = 0; l < numLayers; l++) {
+                    for (let p = 0; p < pointsPerLayer; p++) {
+                        const i1 = l * pointsPerLayer + p;
+                        const i2 = (l + 1) * pointsPerLayer + p;
+                        const p1 = project(rotated[i1], cx, cy, size);
+                        const p2 = project(rotated[i2], cx, cy, size);
+                        
+                        const avgZ = (rotated[i1].z + rotated[i2].z) / 2;
+                        const depthAlpha = (avgZ + 1.5) / 3;
+                        
+                        ctx.strokeStyle = `${holoColor}${Math.max(0.02, Math.min(0.6, 0.02 + depthAlpha * 0.35))})`;
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+
+                // Draw a glowing horizontal laser guide line corresponding to localScanY
+                const centerPointRotated = {
+                    x: 0,
+                    y: localScanY,
+                    z: 0
+                };
+                // Rotate center point
+                let cx1 = centerPointRotated.x * Math.cos(angleY) - centerPointRotated.z * Math.sin(angleY);
+                let cz1 = centerPointRotated.x * Math.sin(angleY) + centerPointRotated.z * Math.cos(angleY);
+                let cy2 = centerPointRotated.y * Math.cos(angleX) - cz1 * Math.sin(angleX);
+                const projectedCenter = project({ x: cx1, y: cy2 }, cx, cy, size);
+
+                ctx.strokeStyle = `${holoColor}0.35)`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(cx - size * 1.1, projectedCenter.y);
+                ctx.lineTo(cx + size * 1.1, projectedCenter.y);
+                ctx.stroke();
+                
+                // Slowly update rotation
+                angleY += rotationSpeed;
+                
+                requestAnimationFrame(drawHoloSphere);
+            }
+
+            function project(p, cx, cy, size) {
+                return {
+                    x: cx + p.x * size,
+                    y: cy - p.y * size // subtract y so positive coordinates go up
+                };
+            }
+
+            // Start Hologram Drawing Loop
+            requestAnimationFrame(drawHoloSphere);
+
+            // operational priority vector modes
+            const priorityBtns = document.querySelectorAll('.priority-btn');
+            const priorityModeLabel = document.getElementById('priority-mode-label');
+            const holoFeedLabel = document.getElementById('holo-feed-label');
+
+            // Function to dynamically update dynamic theme colors based on active mode & theme
+            function updateDynamicVariables() {
+                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                const activeModeBtn = document.querySelector('.priority-btn.active');
+                const mode = activeModeBtn ? activeModeBtn.dataset.mode : 'precision';
+                const terminalElement = document.querySelector('.cyber-dark-terminal');
+                if (!terminalElement) return;
+
+                let primaryColor, primaryGlow;
+                if (mode === 'precision' || mode === 'velocity') {
+                    primaryColor = isLight ? '#0891b2' : '#00f0ff';
+                    primaryGlow = isLight ? 'rgba(8, 145, 178, 0.15)' : 'rgba(0, 240, 255, 0.35)';
+                } else if (mode === 'efficiency') {
+                    primaryColor = isLight ? '#7c3aed' : '#bd00ff';
+                    primaryGlow = isLight ? 'rgba(124, 58, 237, 0.15)' : 'rgba(189, 0, 255, 0.35)';
+                } else if (mode === 'bio') {
+                    primaryColor = isLight ? '#db2777' : '#ff007a';
+                    primaryGlow = isLight ? 'rgba(219, 39, 119, 0.15)' : 'rgba(255, 0, 122, 0.35)';
+                }
+
+                terminalElement.style.setProperty('--primary', primaryColor);
+                terminalElement.style.setProperty('--primary-glow', primaryGlow);
+            }
+
+            // Mutation observer to capture theme toggles instantly and synchronize values
+            const themeObserver = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.attributeName === 'data-theme') {
+                        updateDynamicVariables();
+                    }
+                });
+            });
+            themeObserver.observe(document.documentElement, { attributes: true });
+
+            priorityBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    priorityBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const mode = btn.dataset.mode;
+                    let modeText = btn.textContent.toUpperCase();
+                    priorityModeLabel.textContent = modeText;
+                    
+                    // Log operation change
+                    const logMsg = `[SYS] Adjusted fabrication priority mode to ${modeText}. Synchronizing kinematics...`;
+                    appendSystemLog(logMsg);
+
+                    if (mode === 'precision') {
+                        rotationSpeed = 0.003;
+                        holoFeedLabel.textContent = "ADDITIVE CORE ENGINE: PRECISION LAYER SCAN";
+                    } else if (mode === 'velocity') {
+                        rotationSpeed = 0.015;
+                        holoFeedLabel.textContent = "ADDITIVE CORE ENGINE: MAX VOLUMETRIC FLOW";
+                    } else if (mode === 'efficiency') {
+                        rotationSpeed = 0.006;
+                        holoFeedLabel.textContent = "ADDITIVE CORE ENGINE: ECO SINTERING ACTIVE";
+                    } else if (mode === 'bio') {
+                        rotationSpeed = 0.004;
+                        holoFeedLabel.textContent = "ADDITIVE CORE ENGINE: HYDROGEL SCAFFOLD BUILD";
+                    }
+                    
+                    updateDynamicVariables();
+                });
+            });
+
+            // Initial load variables calibration
+            updateDynamicVariables();
+
+            function appendSystemLog(message) {
+                const cursor = terminalLog.querySelector('.cursor');
+                if (cursor) {
+                    terminalLog.removeChild(cursor);
+                }
+                
+                const newLine = document.createElement('div');
+                newLine.className = 'log-line';
+                newLine.innerHTML = `<span class="prompt">></span> ${message}`;
+                terminalLog.appendChild(newLine);
+                
+                const newCursor = document.createElement('span');
+                newCursor.className = 'cursor';
+                terminalLog.appendChild(newCursor);
+                
+                terminalLog.scrollTop = terminalLog.scrollHeight;
+            }
+
+            // =============================================
+            // HUD SECTOR TABS OPERATIONS
+            // =============================================
+            const sectorTelemetry = {
+                space: {
+                    title: "ZERO-G SINTERING TELEMETRY",
+                    laser: "12,500 mm/s",
+                    laserVal: 65,
+                    temp: "1,850 °C",
+                    tempVal: 58,
+                    thickness: "5 nm",
+                    thicknessVal: 12,
+                    vacuum: "1.2e-9 Torr",
+                    vacuumVal: 95,
+                    logs: [
+                        "[DIAG] Space laser sintering unit synced with orbital hub Alpha",
+                        "[SYS] Solar radiation shields active, thermal deflection within margins",
+                        "[SYS] Gravity simulation scale: 0.00G - fluid-alloy dynamics operational"
+                    ]
+                },
+                nanotech: {
+                    title: "ATOMIC SYNTHESIS TELEMETRY",
+                    laser: "28,000 mm/s",
+                    laserVal: 90,
+                    temp: "3,200 °C",
+                    tempVal: 92,
+                    thickness: "1 nm",
+                    thicknessVal: 3,
+                    vacuum: "1.0e-7 Torr",
+                    vacuumVal: 85,
+                    logs: [
+                        "[DIAG] Atomic lattice deposition initialized at molecular level",
+                        "[SYS] Carbon-ring covalent bond alignment verified at 99.98% accuracy",
+                        "[WARN] High energy flux detected - magnetic confinement coils charging"
+                    ]
+                },
+                medical: {
+                    title: "BIO-ORGANIC SCAFFOLDS TELEMETRY",
+                    laser: "450 mm/s",
+                    laserVal: 8,
+                    temp: "37 °C",
+                    tempVal: 5,
+                    thickness: "50 µm",
+                    thicknessVal: 60,
+                    vacuum: "760 Torr (N2)",
+                    vacuumVal: 5,
+                    logs: [
+                        "[DIAG] Bio-printer cell suspension temperature locked at physiological 37°C",
+                        "[SYS] Nutrient scaffold perfusion loop active - flow rate: 0.5 mL/min",
+                        "[SYS] Collagen extrusion pressure verified: 12.4 kPa"
+                    ]
+                },
+                fleet: {
+                    title: "SWARM EXTRUSION TELEMETRY",
+                    laser: "250 mm/s (Feed Rate)",
+                    laserVal: 65,
+                    temp: "220 °C",
+                    tempVal: 48,
+                    thickness: "200 µm",
+                    thicknessVal: 85,
+                    vacuum: "Atmospheric",
+                    vacuumVal: 1,
+                    logs: [
+                        "[DIAG] Calibrating 24-nozzle FDM extrusion array for parallel print coordinates",
+                        "[SYS] Berlin Hub print nozzle alignment check: nominal variance < 0.02mm",
+                        "[SYS] Tokyo Hub PLA material feed rate: 100% capacity (automatic feed active)"
+                    ]
+                }
+            };
+
+            const tabItems = document.querySelectorAll('.hud-tab-item');
+            const sectorTitleText = document.getElementById('hud-sector-title');
+            const gaugeLaser = document.getElementById('gauge-laser');
+            const gaugeTemp = document.getElementById('gauge-temp');
+            const gaugeThickness = document.getElementById('gauge-thickness');
+            const gaugeVacuum = document.getElementById('gauge-vacuum');
+
+            const barLaser = document.getElementById('bar-laser');
+            const barTemp = document.getElementById('bar-temp');
+            const barThickness = document.getElementById('bar-thickness');
+            const barVacuum = document.getElementById('bar-vacuum');
+            const diagnosticsLog = document.getElementById('hud-diagnostics-log');
+
+            tabItems.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabItems.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    const sec = tab.dataset.tab;
+                    const data = sectorTelemetry[sec];
+                    
+                    // Update Text labels
+                    sectorTitleText.textContent = data.title;
+                    gaugeLaser.textContent = data.laser;
+                    gaugeTemp.textContent = data.temp;
+                    gaugeThickness.textContent = data.thickness;
+                    gaugeVacuum.textContent = data.vacuum;
+                    
+                    // Animate Bar fills
+                    barLaser.style.width = `${data.laserVal}%`;
+                    barTemp.style.width = `${data.tempVal}%`;
+                    barThickness.style.width = `${data.thicknessVal}%`;
+                    barVacuum.style.width = `${data.vacuumVal}%`;
+
+                    // Output new diagnostics log lines
+                    diagnosticsLog.innerHTML = '';
+                    data.logs.forEach(line => {
+                        const div = document.createElement('div');
+                        div.style.marginBottom = '4px';
+                        div.textContent = line;
+                        diagnosticsLog.appendChild(div);
+                    });
+                    diagnosticsLog.scrollTop = 0;
+                });
+            });
+
+            // Initialize tabs telemetry values correctly on first load
+            barLaser.style.width = `65%`;
+            barTemp.style.width = `58%`;
+            barThickness.style.width = `12%`;
+            barVacuum.style.width = `95%`;
+            
+            const initDiag = sectorTelemetry.space.logs;
+            diagnosticsLog.innerHTML = '';
+            initDiag.forEach(line => {
+                const div = document.createElement('div');
+                div.style.marginBottom = '4px';
+                div.textContent = line;
+                diagnosticsLog.appendChild(div);
+            });
+
+            // =============================================
+            // PRINT QUEUE PIPELINE SIMULATOR
+            // =============================================
+            const sinterCanvas = document.getElementById('sinter-canvas');
+            const sCtx = sinterCanvas.getContext('2d');
+            const laserBeam = document.getElementById('laser-beam-indicator');
+            const statusOverlay = document.getElementById('pipeline-overlay-status');
+            const initializeBtn = document.getElementById('initialize-pipeline-btn');
+            const pipelineProgressLine = document.getElementById('pipeline-progress-line');
+
+            let particles = [];
+            let sinteringActive = false;
+            let laserX = 0;
+
+            function resizeSinterCanvas() {
+                if (sinterCanvas) {
+                    sinterCanvas.width = sinterCanvas.parentElement.clientWidth;
+                    sinterCanvas.height = sinterCanvas.parentElement.clientHeight;
+                }
+            }
+            window.addEventListener('resize', resizeSinterCanvas);
+            resizeSinterCanvas();
+
+            function initSinterParticles() {
+                particles = [];
+                const width = sinterCanvas.width;
+                const height = sinterCanvas.height;
+                
+                const rows = 14;
+                const cols = Math.floor(width / 14);
+                
+                for (let r = 0; r < rows; r++) {
+                    for (let c = 0; c < cols; c++) {
+                        const x = c * 14 + Math.random() * 4 + 8;
+                        const y = height - (r * 11 + Math.random() * 4 + 25);
+                        
+                        const cx = width / 2;
+                        
+                        let insideModel = false;
+                        const dx = Math.abs(x - cx);
+                        const dy = y - (height - 150); // Height limit
+                        
+                        // Vase silhouette calculation (matching the rotating 3D hologram vase shape)
+                        if (dy > 0 && dy < 115) {
+                            const h = dy / 115;
+                            const r = (0.25 + 0.15 * Math.sin(h * Math.PI * 2.5) + 0.05 * Math.cos(h * Math.PI * 1.5)) * 90;
+                            if (dx < r) insideModel = true;
+                        }
+                        
+                        particles.push({
+                            x: x,
+                            y: y,
+                            fused: false,
+                            insideModel: insideModel,
+                            size: Math.random() * 1.5 + 1
+                        });
+                    }
+                }
+            }
+
+            function runSinteringAnimation() {
+                if (!sinteringActive) return;
+                
+                sCtx.clearRect(0, 0, sinterCanvas.width, sinterCanvas.height);
+                
+                const width = sinterCanvas.width;
+                const height = sinterCanvas.height;
+                
+                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                const fusedColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || (isLight ? '#0891b2' : '#00f0ff');
+                const unfusedColor = isLight ? 'rgba(15, 23, 42, 0.15)' : 'rgba(255, 255, 255, 0.12)';
+                
+                particles.forEach(p => {
+                    if (p.x < laserX) {
+                        if (p.insideModel) p.fused = true;
+                    }
+                    
+                    if (p.fused) {
+                        sCtx.fillStyle = fusedColor;
+                        sCtx.shadowBlur = isLight ? 0 : 5;
+                        sCtx.shadowColor = fusedColor;
+                    } else {
+                        sCtx.fillStyle = unfusedColor;
+                        sCtx.shadowBlur = 0;
+                    }
+                    
+                    sCtx.beginPath();
+                    sCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    sCtx.fill();
+                });
+                
+                sCtx.shadowBlur = 0;
+                
+                // Handle laser lines
+                if (laserX < width) {
+                    laserBeam.style.left = `${laserX}px`;
+                    laserBeam.style.opacity = '0.95';
+                    
+                    // Laser flashes sparks
+                    for (let k = 0; k < 5; k++) {
+                        sCtx.fillStyle = isLight ? '#0f172a' : '#ffffff';
+                        sCtx.beginPath();
+                        sCtx.arc(laserX + (Math.random() - 0.5) * 8, height - 30 - Math.random() * 110, Math.random() * 2 + 1, 0, Math.PI * 2);
+                        sCtx.fill();
+                    }
+                    
+                    laserX += (width / 150); // Scan speed
+                    requestAnimationFrame(runSinteringAnimation);
+                } else {
+                    laserBeam.style.opacity = '0';
+                    sinteringActive = false;
+                    stepComplete(4);
+                }
+            }
+
+            // Stepper simulation flows
+            let currentPipelineStep = 0;
+            
+            initializeBtn.addEventListener('click', () => {
+                if (currentPipelineStep !== 0) return; // Prevent double clicking
+                
+                initializeBtn.disabled = true;
+                initializeBtn.style.opacity = '0.5';
+                
+                // Clear steps styles
+                document.querySelectorAll('.step-node').forEach(node => {
+                    node.classList.remove('active', 'completed');
+                });
+                
+                // Clear canvas
+                sCtx.clearRect(0, 0, sinterCanvas.width, sinterCanvas.height);
+                
+                // Step 0: Slicing starts
+                currentPipelineStep = 0;
+                document.getElementById('step-0').classList.add('active');
+                pipelineProgressLine.style.width = '0%';
+                statusOverlay.textContent = "[STEP 1/5] GEOMETRY SLICING: PARSING OBJ/STEP DENSE VECTOR GRAPH...";
+                appendSystemLog("[QUEUE] Geometry slicing initialized for simulator queue...");
+                
+                setTimeout(() => {
+                    // Step 0 completed, step 1 begins
+                    document.getElementById('step-0').classList.add('completed');
+                    document.getElementById('step-0').classList.remove('active');
+                    document.getElementById('step-1').classList.add('active');
+                    pipelineProgressLine.style.width = '25%';
+                    
+                    // Run a countdown for vacuum pressurization
+                    let pValue = 760;
+                    const vacuumInterval = setInterval(() => {
+                        pValue = pValue * 0.15;
+                        if (pValue <= 1e-8) {
+                            clearInterval(vacuumInterval);
+                            statusOverlay.textContent = "[STEP 2/5] VACUUM CHAMBER SEALS COMPLETE: 1.0e-8 TORR LOCKED.";
+                        } else {
+                            statusOverlay.textContent = `[STEP 2/5] DE-PRESSURIZING CHAMBER VACUUM: ${pValue.toExponential(2)} Torr...`;
+                        }
+                    }, 120);
+                    
+                    setTimeout(() => {
+                        clearInterval(vacuumInterval);
+                        stepComplete(1);
+                    }, 1400);
+                    
+                }, 1500);
+            });
+
+            function stepComplete(stepIndex) {
+                // Sintering completes, start final dispatch
+                if (stepIndex === 4) {
+                    document.getElementById('step-3').classList.add('completed');
+                    document.getElementById('step-3').classList.remove('active');
+                    document.getElementById('step-4').classList.add('active');
+                    pipelineProgressLine.style.width = '100%';
+                    appendSystemLog("[QUEUE] Fabricated model sintering checks: 100% OK.");
+                    
+                    statusOverlay.textContent = "[STEP 5/5] Fabricated component cleared. Quality checks passed. Dispatching component to packaging...";
+                    
+                    setTimeout(() => {
+                        document.getElementById('step-4').classList.add('completed');
+                        document.getElementById('step-4').classList.remove('active');
+                        statusOverlay.textContent = "[COMPLETE] SYNTHESIS VECTOR COMPLETED. CORE SYSTEMS RE-CALIBRATED.";
+                        
+                        appendSystemLog("[SYS] Fabrication successful: component vector Sigma-9 loaded and logged.");
+                        
+                        // Re-enable buttons
+                        initializeBtn.disabled = false;
+                        initializeBtn.style.opacity = '1';
+                        currentPipelineStep = 0;
+                        
+                        // Dispatch a local event to increase hub workload!
+                        let hubs = JSON.parse(localStorage.getItem('hubs_db') || '[]');
+                        if (hubs.length > 0) {
+                            hubs[0].activePrints += 1;
+                            hubs[0].load = Math.min(100, hubs[0].load + 2);
+                            localStorage.setItem('hubs_db', JSON.stringify(hubs));
+                            renderHubCards();
+                        }
+                    }, 1500);
+                } else {
+                    // Fallback routing for earlier steps
+                    if (stepIndex === 1) { // Vacuum complete, start Temp Ramp
+                        document.getElementById('step-1').classList.add('completed');
+                        document.getElementById('step-1').classList.remove('active');
+                        document.getElementById('step-2').classList.add('active');
+                        pipelineProgressLine.style.width = '50%';
+                        appendSystemLog("[QUEUE] Chamber atmospheric lock verified.");
+
+                        let tempVal = 25;
+                        const targetTemp = 1850;
+                        const tempInterval = setInterval(() => {
+                            tempVal += 150;
+                            if (tempVal >= targetTemp) {
+                                clearInterval(tempInterval);
+                                statusOverlay.textContent = `[STEP 3/5] THERMAL RAMP COMPLETE: Target ${targetTemp}°C stabilized.`;
+                            } else {
+                                statusOverlay.textContent = `[STEP 3/5] HEATING ELECTRON GUN FILAMENTS: ${tempVal}°C / ${targetTemp}°C...`;
+                            }
+                        }, 80);
+
+                        setTimeout(() => {
+                            clearInterval(tempInterval);
+                            stepComplete(2); // Next step is index 2 (sintering)
+                        }, 1400);
+                    } 
+                    else if (stepIndex === 2) { // Temp complete, start Laser Sintering
+                        document.getElementById('step-2').classList.add('completed');
+                        document.getElementById('step-2').classList.remove('active');
+                        document.getElementById('step-3').classList.add('active');
+                        pipelineProgressLine.style.width = '75%';
+                        appendSystemLog("[QUEUE] Sintering laser thermal vector ready.");
+
+                        statusOverlay.textContent = "[STEP 4/5] LASER SWEEP ACTIVE: ELECTRON SINTERING MOLECULAR LAYER GRID...";
+                        
+                        // Run laser sinter animation
+                        initSinterParticles();
+                        laserX = 0;
+                        sinteringActive = true;
+                        runSinteringAnimation();
+                    }
+                }
+            }
+
+            // =============================================
+            // COMPARATIVE MATERIAL INTERACTIVE SELECTION
+            // =============================================
+            const materialStats = {
+                lattice: {
+                    name: "Nano-Lattice Matrix",
+                    tag: "NL-9002",
+                    desc: "Ultra-low mass crystalline matrix structured with covalent carbon grids.",
+                    strength: 95,
+                    flex: 12,
+                    temp: 85,
+                    conduct: 5
+                },
+                ceramics: {
+                    name: "Bio-Ceramics Scaffold",
+                    tag: "BC-109X",
+                    desc: "Synthesized calcium phosphate scaffold engineered for bone-replacement assimilation.",
+                    strength: 78,
+                    flex: 2,
+                    temp: 95,
+                    conduct: 1
+                },
+                polymer: {
+                    name: "Flux-Polymer Core",
+                    tag: "FP-VAR",
+                    desc: "Electro-active polymer changing elasticity based on frequency current sweeps.",
+                    strength: 45,
+                    flex: 98,
+                    temp: 40,
+                    conduct: 70
+                },
+                alloy: {
+                    name: "Graphene Smart-Alloy",
+                    tag: "GSA-92",
+                    desc: "Super-alloy with molecular layers of graphene sheets providing thermal superconductivity.",
+                    strength: 99,
+                    flex: 25,
+                    temp: 98,
+                    conduct: 95
+                }
+            };
+
+            const matCapsules = document.querySelectorAll('.mat-capsule');
+            const matrixTitle = document.getElementById('matrix-material-title');
+            const matrixDesc = document.getElementById('matrix-material-desc');
+            const valStrength = document.getElementById('stat-val-strength');
+            const valFlex = document.getElementById('stat-val-flex');
+            const valTemp = document.getElementById('stat-val-temp');
+            const valConduct = document.getElementById('stat-val-conduct');
+            const sliderStrength = document.getElementById('slider-strength');
+            const sliderFlex = document.getElementById('slider-flex');
+            const sliderTemp = document.getElementById('slider-temp');
+            const sliderConduct = document.getElementById('slider-conduct');
+
+            matCapsules.forEach(capsule => {
+                capsule.addEventListener('click', () => {
+                    matCapsules.forEach(c => c.classList.remove('active'));
+                    capsule.classList.add('active');
+                    
+                    const matKey = capsule.dataset.mat;
+                    const stat = materialStats[matKey];
+                    
+                    // Update Text Values
+                    matrixTitle.textContent = stat.name;
+                    matrixDesc.textContent = stat.desc;
+                    valStrength.textContent = `${stat.strength}%`;
+                    valFlex.textContent = `${stat.flex}%`;
+                    valTemp.textContent = `${stat.temp}%`;
+                    valConduct.textContent = `${stat.conduct}%`;
+                    
+                    // Set Sliders widths
+                    sliderStrength.style.width = `${stat.strength}%`;
+                    sliderFlex.style.width = `${stat.flex}%`;
+                    sliderTemp.style.width = `${stat.temp}%`;
+                    sliderConduct.style.width = `${stat.conduct}%`;
+
+                    appendSystemLog(`[SYS] Scanned material vector metrics: ${stat.tag} loaded.`);
+                });
+            });
+
+            // =============================================
+            // LIVE FLEET HUB DATA SYNC & RENDER
+            // =============================================
+            const hubContainer = document.getElementById('hub-fleet-container');
+
+            function syncHubsWithOrders() {
+                let hubs = JSON.parse(localStorage.getItem('hubs_db') || '[]');
+                if (hubs.length === 0) {
+                    hubs = [
+                        { name: "Berlin Hub Alpha", location: "Germany", status: "Online", load: 85, activePrints: 12 },
+                        { name: "Tokyo Hub Beta", location: "Japan", status: "Online", load: 42, activePrints: 5 },
+                        { name: "NYC Hub Gamma", location: "USA", status: "Maintenance", load: 95, activePrints: 0 }
+                    ];
+                }
+                
+                // Read user orders database to sync active counts dynamically
+                const orders = JSON.parse(localStorage.getItem('orders_db') || '[]');
+                const activeUserOrders = orders.filter(o => ['Slicing', 'Printing', 'QC'].includes(o.status)).length;
+                
+                if (activeUserOrders > 0) {
+                    // Update loads slightly to represent active user workflow
+                    hubs[0].activePrints = 12 + Math.ceil(activeUserOrders / 2);
+                    hubs[0].load = Math.min(100, 85 + Math.ceil(activeUserOrders * 2));
+                    
+                    hubs[1].activePrints = 5 + Math.floor(activeUserOrders / 2);
+                    hubs[1].load = Math.min(100, 42 + Math.ceil(activeUserOrders * 3));
+                }
+                
+                localStorage.setItem('hubs_db', JSON.stringify(hubs));
+                return hubs;
+            }
+
+            function renderHubCards() {
+                const hubs = syncHubsWithOrders();
+                hubContainer.innerHTML = '';
+                
+                hubs.forEach(hub => {
+                    const card = document.createElement('div');
+                    card.className = 'hub-fleet-card';
+                    
+                    // Status dot coloring logic
+                    let dotClass = '';
+                    if (hub.status.toLowerCase() === 'maintenance') {
+                        dotClass = 'warning';
+                    } else if (hub.load >= 90) {
+                        dotClass = 'critical';
+                    }
+                    
+                    card.innerHTML = `
+                        <div class="hub-fleet-header">
+                            <h4 style="color: #fff; font-weight: 700; font-family: 'Outfit'; font-size: 1.15rem;">${hub.name}</h4>
+                            <span class="hub-indicator ${dotClass}" title="${hub.status} - Load ${hub.load}%"></span>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--primary); font-family: monospace; text-transform: uppercase;">
+                            <i class="fas fa-map-marker-alt"></i> Location: ${hub.location}
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 5px;">
+                            <div class="hub-stat-row">
+                                <span>Network Status</span>
+                                <span class="hub-stat-val" style="color: ${hub.status.toLowerCase() === 'online' ? '#10b981' : '#f59e0b'}">${hub.status}</span>
+                            </div>
+                            <div class="hub-stat-row">
+                                <span>Core Print Load</span>
+                                <span class="hub-stat-val">${hub.load}%</span>
+                            </div>
+                            <div class="hub-stat-row">
+                                <span>Active Prints In Queue</span>
+                                <span class="hub-stat-val">${hub.activePrints} units</span>
+                            </div>
+                        </div>
+                    `;
+                    hubContainer.appendChild(card);
+                });
+            }
+
+            // Perform initial load of Hub cards
+            renderHubCards();
+
+            // Sync hubs database whenever a change happens in localStorage (e.g. from user/admin dashboards)
+            window.addEventListener('storage', (e) => {
+                if (['hubs_db', 'orders_db'].includes(e.key)) {
+                    renderHubCards();
+                }
+            });
         });
-        overlay.addEventListener('click', () => {
-            hamburger.classList.remove('open');
-            mobileNav.classList.remove('open');
-            document.body.style.overflow = '';
-        });
-        function toggleMobileSub(id, btn) {
-            document.getElementById(id).classList.toggle('open');
-            btn.classList.toggle('active');
-        }
     </script>
 </body>
 

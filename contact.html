@@ -35,10 +35,10 @@
 
         <nav>
             <div class="nav-item">
-                <a href="index.html" class="nav-link">Home <i class="fas fa-chevron-down"></i></a>
+                <a href="#" class="nav-link">Home <i class="fas fa-chevron-down"></i></a>
                 <div class="dropdown">
-                    <a href="index.html" class="dropdown-link">Home 1</a>
-                    <a href="home2.html" class="dropdown-link">Home 2</a>
+                    <a href="index.html" class="dropdown-link">Home 1 (Enterprise Portal)</a>
+                    <a href="home2.html" class="dropdown-link">Home 2 (Futuristic Hub)</a>
                 </div>
             </div>
             <div class="nav-item">
@@ -77,8 +77,8 @@
                 Home <i class="fas fa-chevron-down"></i>
             </button>
             <div class="mobile-sub-group" id="home-sub">
-                <a href="index.html" class="mobile-sub-link">Home 1</a>
-                <a href="home2.html" class="mobile-sub-link">Home 2</a>
+                <a href="index.html" class="mobile-sub-link">Home 1 (Enterprise Portal)</a>
+                <a href="home2.html" class="mobile-sub-link">Home 2 (Futuristic Hub)</a>
             </div>
             <a href="about.html" class="mobile-nav-link">About</a>
             <a href="services.html" class="mobile-nav-link">Services</a>
@@ -98,55 +98,55 @@
 
     <main style="padding-top: 80px;">
         <!-- Section 1: Hero -->
-        <section class="hero" style="height: 50vh; min-height: 400px;">
-            <div class="hero-content">
-                <span class="section-tag">Reach Out</span>
-                <h1 style="font-size: 3.5rem;">Dialogue for the Future</h1>
+        <section class="hero cyber-grid" style="height: 50vh; min-height: 400px;">
+            <div class="hero-content reveal">
+                <span class="section-tag glow-text">Reach Out</span>
+                <h1 class="glow-text" style="font-size: 4rem;">Dialogue for the Future</h1>
                 <p>Have a complex project or a simple query? Our experts are standing by to bring your vision to life.
-                </p>
+                    Precision consulting for industrial scale.</p>
             </div>
         </section>
 
         <!-- Section 2: Contact Form -->
-        <section id="contact-portal" style="background: var(--bg-card);">
+        <section id="contact-portal" style="background: var(--bg-card);" class="reveal">
             <div style="max-width: 900px; margin: 0 auto;">
-                <div class="card" style="padding: clamp(24px, 5vw, 60px);">
+                <div class="bento-item" style="padding: clamp(30px, 5vw, 80px); box-shadow: var(--shadow-lg);">
                     <form>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
-                            <div>
-                                <label style="display: block; margin-bottom: 15px; font-weight: 600;">Full Name</label>
+                            <div class="form-group">
+                                <label style="display: block; margin-bottom: 15px; font-weight: 700; color: var(--text-main); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">Full Name</label>
                                 <input type="text" placeholder="Johnathan Doe"
-                                    style="width: 100%; padding: 15px 25px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-main);">
+                                    style="width: 100%; padding: 18px 25px; border-radius: 16px; border: 2px solid var(--border); background: var(--bg-main); color: var(--text-main); font-family: inherit; transition: var(--transition);">
                             </div>
-                            <div>
+                            <div class="form-group">
                                 <label
-                                    style="display: block; margin-bottom: 15px; font-weight: 600;">Organization</label>
+                                    style="display: block; margin-bottom: 15px; font-weight: 700; color: var(--text-main); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">Organization</label>
                                 <input type="text" placeholder="SpaceX"
-                                    style="width: 100%; padding: 15px 25px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-main);">
+                                    style="width: 100%; padding: 18px 25px; border-radius: 16px; border: 2px solid var(--border); background: var(--bg-main); color: var(--text-main); font-family: inherit; transition: var(--transition);">
                             </div>
                         </div>
-                        <div style="margin-bottom: 30px;">
-                            <label style="display: block; margin-bottom: 15px; font-weight: 600;">Email Address</label>
+                        <div style="margin-bottom: 30px;" class="form-group">
+                            <label style="display: block; margin-bottom: 15px; font-weight: 700; color: var(--text-main); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">Email Address</label>
                             <input type="email" placeholder="john@domain.com"
-                                style="width: 100%; padding: 15px 25px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-main);">
+                                style="width: 100%; padding: 18px 25px; border-radius: 16px; border: 2px solid var(--border); background: var(--bg-main); color: var(--text-main); font-family: inherit; transition: var(--transition);">
                         </div>
-                        <div style="margin-bottom: 30px;">
-                            <label style="display: block; margin-bottom: 15px; font-weight: 600;">Interest Area</label>
+                        <div style="margin-bottom: 30px;" class="form-group">
+                            <label style="display: block; margin-bottom: 15px; font-weight: 700; color: var(--text-main); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">Interest Area</label>
                             <select
-                                style="width: 100%; padding: 15px 25px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-main); font-family: inherit;">
+                                style="width: 100%; padding: 18px 25px; border-radius: 16px; border: 2px solid var(--border); background: var(--bg-main); color: var(--text-main); font-family: inherit; transition: var(--transition);">
                                 <option>Rapid Prototyping</option>
                                 <option>Industrial Batch Production</option>
                                 <option>B2B Partnership</option>
                                 <option>R&D Collaboration</option>
                             </select>
                         </div>
-                        <div style="margin-bottom: 40px;">
-                            <label style="display: block; margin-bottom: 15px; font-weight: 600;">Your Message</label>
+                        <div style="margin-bottom: 40px;" class="form-group">
+                            <label style="display: block; margin-bottom: 15px; font-weight: 700; color: var(--text-main); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">Your Message</label>
                             <textarea rows="6" placeholder="Project details, deadlines, materials..."
-                                style="width: 100%; padding: 15px 25px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-main); font-family: inherit;"></textarea>
+                                style="width: 100%; padding: 18px 25px; border-radius: 16px; border: 2px solid var(--border); background: var(--bg-main); color: var(--text-main); font-family: inherit; transition: var(--transition); resize: vertical;"></textarea>
                         </div>
                         <button type="submit" class="login-btn"
-                            style="width: 100%; border: none; cursor: pointer; padding: 18px;">Initiate
+                            style="width: 100%; border: none; cursor: pointer; padding: 22px; font-size: 1.1rem; letter-spacing: 1px; text-transform: uppercase;">Initiate
                             Protocol</button>
                     </form>
                 </div>

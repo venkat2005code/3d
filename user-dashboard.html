@@ -25,6 +25,9 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Three.js Visualizer CDN Imports -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <style>
         /* ── CSS Variables ── */
         :root {
@@ -972,6 +975,768 @@
         .welcome-action:hover {
             background: rgba(255, 255, 255, 0.3);
         }
+
+        /* ════════════════════════════════════
+           3D CONFIGURATOR & DASHBOARD STYLES
+        ════════════════════════════════════ */
+        .config-container {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .config-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .config-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .config-section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .config-form-group {
+            margin-bottom: 20px;
+        }
+
+        .config-form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .config-select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg-main);
+            color: var(--text-main);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .config-select:focus {
+            border-color: var(--primary);
+        }
+
+        /* Color Picker Dots */
+        .color-selector {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .color-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .color-dot:hover {
+            transform: scale(1.1);
+        }
+
+        .color-dot.active {
+            border-color: var(--text-main);
+            transform: scale(1.15);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Slider Controls */
+        .slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .slider-wrapper input[type="range"] {
+            flex: 1;
+            height: 6px;
+            border-radius: 5px;
+            background: var(--border);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider-wrapper input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .slider-wrapper input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .slider-value {
+            font-family: monospace;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary);
+            min-width: 45px;
+            text-align: right;
+        }
+
+        /* Option Chips/Button Group */
+        .chip-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .chip-btn {
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-main);
+            color: var(--text-main);
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .chip-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .chip-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 10px var(--primary-glow);
+        }
+
+        /* Visualizer Panel */
+        .visualizer-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .visualizer-canvas-container {
+            width: 100%;
+            height: 350px;
+            position: relative;
+            background: radial-gradient(circle at 50% 50%, var(--bg-main), var(--border));
+            border-bottom: 1px solid var(--border);
+        }
+
+        .visualizer-canvas-container canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .canvas-label {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+        }
+
+        .visualizer-stats {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            color: var(--text-main);
+            font-size: 0.75rem;
+            pointer-events: none;
+            background: rgba(255,255,255,0.7);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(8px);
+            font-family: monospace;
+        }
+
+        [data-theme="dark"] .visualizer-stats {
+            background: rgba(15,23,42,0.7);
+        }
+
+        .visualizer-controls {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .vis-control-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .vis-control-btn:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Price Estimator Details Card */
+        .price-details-card {
+            padding: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            margin-top: 20px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.88rem;
+        }
+
+        .price-row.total {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border);
+            font-weight: 800;
+            font-size: 1.15rem;
+            color: var(--secondary);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .price-row span:last-child {
+            font-weight: 700;
+        }
+
+        /* Drag/Drop Zone In Dashboard */
+        .dash-upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--bg-main);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .dash-upload-zone:hover {
+            border-color: var(--primary);
+            background: var(--primary-glow);
+        }
+
+        .dash-upload-zone i {
+            font-size: 2.5rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .dash-file-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 18px;
+            background: var(--primary-glow);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            font-size: 0.88rem;
+            margin-bottom: 20px;
+        }
+
+        /* Dynamic Orders Timeline / Stepper */
+        .orders-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .order-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .order-card-header {
+            padding: 16px 20px;
+            background: var(--bg-main);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .order-card-body {
+            padding: 20px;
+        }
+
+        .order-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .order-detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .order-detail-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .order-detail-val {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* Interactive Timeline Stepper */
+        .stepper-wrapper {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+
+        .stepper-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50px;
+            right: 50px;
+            height: 4px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .stepper-progress {
+            position: absolute;
+            top: 20px;
+            left: 50px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            z-index: 1;
+            transition: width 0.5s ease;
+        }
+
+        .step-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+            text-align: center;
+            width: 100px;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 3px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .step-node.completed .step-icon {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .step-node.active .step-icon {
+            border-color: var(--secondary);
+            color: var(--secondary);
+            background: var(--bg-card);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+            animation: pulse-step 2s infinite;
+        }
+
+        @keyframes pulse-step {
+            0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(6, 182, 212, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
+        }
+
+        .step-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-top: 10px;
+            transition: var(--transition);
+        }
+
+        .step-node.active .step-label {
+            color: var(--secondary);
+        }
+
+        .step-node.completed .step-label {
+            color: var(--primary);
+        }
+
+        @media (max-width: 600px) {
+            .stepper-wrapper {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+                padding-left: 20px;
+            }
+
+            .stepper-wrapper::before {
+                left: 36px;
+                top: 0;
+                bottom: 0;
+                width: 4px;
+                height: 80%;
+            }
+
+            .stepper-progress {
+                left: 36px;
+                top: 0;
+                width: 4px !important;
+                height: 0;
+                transition: height 0.5s ease;
+            }
+
+            .step-node {
+                flex-direction: row;
+                text-align: left;
+                width: auto;
+                gap: 15px;
+            }
+
+            .step-label {
+                margin-top: 0;
+            }
+        }
+
+        /* Material Explorer Styles */
+        .materials-search-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-input-wrapper input {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-main);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input-wrapper input:focus {
+            border-color: var(--primary);
+        }
+
+        .material-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .material-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .material-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border-color: var(--primary);
+        }
+
+        .mat-card-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mat-card-header h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .mat-card-body {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mat-property-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .mat-property-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .mat-progress-bar {
+            height: 6px;
+            background: var(--bg-main);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .mat-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+        }
+
+        .mat-price-tag {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--secondary);
+        }
+
+        /* Success Checkmark Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .success-modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .success-modal {
+            transform: scale(1);
+        }
+
+        .checkmark-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.1);
+            border: 3px solid var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--success);
+            font-size: 2.2rem;
+            margin: 0 auto 20px;
+            animation: scale-up 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes scale-up {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        /* Forms in settings */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .settings-input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg-main);
+            color: var(--text-main);
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .settings-input:focus {
+            border-color: var(--primary);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
+        .checkbox-label input {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .api-key-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .api-key-box {
+            font-family: monospace;
+            padding: 12px;
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            flex: 1;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     </style>
 </head>
 
@@ -1028,13 +1793,9 @@
             </button>
         </nav>
 
-        <!-- Footer: Theme + RTL -->
-        <div class="sidebar-footer">
-            <button class="sidebar-foot-btn" id="theme-toggle-sidebar" onclick="toggleTheme()"
-                title="Toggle Dark/Light">
-                <i class="fas fa-moon" id="theme-icon"></i>
-            </button>
-            <button class="sidebar-foot-btn" id="rtl-toggle-sidebar" onclick="toggleDir()" title="Toggle LTR/RTL">LTR</button>
+        <!-- Footer: Info or simple copyright -->
+        <div class="sidebar-footer" style="justify-content: center;">
+            <p style="font-size: 0.75rem; color: var(--text-muted);">&copy; 2026 3DPrint Pro</p>
         </div>
     </aside>
 
@@ -1061,7 +1822,12 @@
                     <i class="fas fa-bell"></i>
                     <span class="notif-dot"></span>
                 </button>
-                <div class="user-avatar" title="Marcus Thorne">MT</div>
+                <div style="width: 1px; height: 20px; background: var(--border); margin: 0 5px;"></div>
+                <button class="action-btn" id="theme-toggle-header" onclick="toggleTheme()" title="Toggle Theme">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+                <button class="action-btn" id="rtl-toggle-header" onclick="toggleDir()" title="Toggle Direction" style="font-weight: 700; font-size: 0.75rem;">LTR</button>
+                <div class="user-avatar" title="Marcus Thorne" style="margin-left: 5px;">MT</div>
             </div>
         </header>
 
@@ -1255,43 +2021,272 @@
             </div>
 
             <!-- ══ TAB 2: ORDERS ══ -->
+            <!-- ══ TAB 2: ORDERS ══ -->
             <div class="tab-page" id="page-orders">
-                <div class="placeholder-page">
-                    <div class="placeholder-icon"><i class="fas fa-box-open"></i></div>
-                    <h2>My Orders</h2>
-                    <p>Track and manage all your 3D print orders from start to delivery.</p>
-                    <a href="contact.html" class="btn-primary">Place New Order</a>
+                <div class="orders-container" id="orders-list-wrapper">
+                    <!-- Orders will be dynamically loaded here by JS -->
                 </div>
             </div>
 
             <!-- ══ TAB 3: UPLOAD ══ -->
             <div class="tab-page" id="page-upload">
-                <div class="placeholder-page">
-                    <div class="placeholder-icon"><i class="fas fa-cloud-upload-alt"></i></div>
-                    <h2>Upload Design</h2>
-                    <p>Upload your STL, OBJ, or CAD files to get an instant quote and start printing.</p>
-                    <button class="btn-primary"><i class="fas fa-upload"></i> Choose File</button>
+                <!-- Dropzone State (When no model is active) -->
+                <div id="config-upload-state">
+                    <div class="dash-upload-zone" id="dash-drop-zone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h2>Upload Your 3D Model</h2>
+                        <p>Drag & drop your STL, OBJ, or CAD file here, or click to browse</p>
+                        <span style="font-size: 0.78rem; color:var(--text-muted); display:block; margin-top:8px;">Supported formats: .stl, .obj, .step, .igs (Max 50MB)</span>
+                        <input type="file" id="dash-file-input" style="display:none;" accept=".stl,.obj,.step,.igs">
+                    </div>
+                </div>
+
+                <!-- Analysis State (Loading bar animation) -->
+                <div id="config-analysis-state" style="display:none;">
+                    <div class="config-card" style="text-align:center; padding: 60px 20px;">
+                        <div class="placeholder-icon" style="background:none;"><i class="fas fa-cog fa-spin"></i></div>
+                        <h2 id="analysis-status">Analyzing 3D File...</h2>
+                        <p id="analysis-subtext" style="color:var(--text-muted); margin-bottom: 20px;">Reading mesh geometry and calculating volume...</p>
+                        <div class="mat-progress-bar" style="max-width: 300px; margin: 0 auto; height: 8px;">
+                            <div class="mat-progress-fill" id="analysis-progress" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Configuration State -->
+                <div id="config-active-state" style="display:none;">
+                    <!-- Compact File Info Row -->
+                    <div class="dash-file-info" id="dash-loaded-file-info">
+                        <div>
+                            <i class="fas fa-file-alt" style="margin-right:8px; color:var(--primary);"></i>
+                            <strong id="loaded-file-name">model_part.stl</strong>
+                            <span style="color:var(--text-muted); margin-left:8px;" id="loaded-file-size">(4.2 MB)</span>
+                        </div>
+                        <button class="vis-control-btn" id="btn-remove-file" title="Remove File" style="width:24px; height:24px; font-size:0.75rem;"><i class="fas fa-times"></i></button>
+                    </div>
+
+                    <!-- Configurator Grid -->
+                    <div class="config-container">
+                        <!-- Left Panel: Form Configuration -->
+                        <div class="config-card">
+                            <h3 class="config-section-title"><i class="fas fa-sliders-h"></i> Configuration Options</h3>
+                            
+                            <div class="config-form-group">
+                                <label for="config-name">Design Name</label>
+                                <input type="text" id="config-name" class="settings-input" style="background:var(--bg-main);" value="Custom 3D Design">
+                            </div>
+
+                            <div class="config-form-group">
+                                <label for="config-material">Print Material</label>
+                                <select id="config-material" class="config-select">
+                                    <option value="pla" data-rate="0.15">PLA+ ($0.15/g)</option>
+                                    <option value="carbon" data-rate="0.45">Carbon Fiber ($0.45/g)</option>
+                                    <option value="titanium" data-rate="1.20">Liquid Titanium ($1.20/g)</option>
+                                    <option value="resin" data-rate="0.55">Crystalline Resin ($0.55/g)</option>
+                                    <option value="peek" data-rate="0.95">High-Temp PEEK ($0.95/g)</option>
+                                    <option value="ceramic" data-rate="0.85">Bio-Ceramic ($0.85/g)</option>
+                                </select>
+                            </div>
+
+                            <div class="config-form-group">
+                                <label>Material Color</label>
+                                <div class="color-selector" id="color-picker-container">
+                                    <!-- Dynamic color dots -->
+                                </div>
+                                <span id="selected-color-name" style="font-size: 0.8rem; font-weight:600; color:var(--primary); margin-top:8px; display:inline-block;">Matte Black</span>
+                            </div>
+
+                            <div class="config-form-group">
+                                <label>Scale (<span id="dimensions-display">40 x 40 x 40 mm</span>)</label>
+                                <div class="slider-wrapper">
+                                    <input type="range" id="config-scale" min="50" max="200" value="100">
+                                    <span class="slider-value" id="scale-value">100%</span>
+                                </div>
+                            </div>
+
+                            <div class="config-form-group">
+                                <label>Infill Density</label>
+                                <div class="slider-wrapper">
+                                    <input type="range" id="config-infill" min="10" max="100" value="20" step="5">
+                                    <span class="slider-value" id="infill-value">20%</span>
+                                </div>
+                            </div>
+
+                            <div class="config-form-group">
+                                <label>Layer Height (Resolution)</label>
+                                <div class="chip-group" id="layer-height-chips">
+                                    <button class="chip-btn" data-lh="0.05">0.05 mm (Ultra Detail)</button>
+                                    <button class="chip-btn" data-lh="0.10">0.10 mm (High Detail)</button>
+                                    <button class="chip-btn active" data-lh="0.20">0.20 mm (Standard)</button>
+                                </div>
+                            </div>
+
+                            <div class="config-form-group">
+                                <label>Surface Finish</label>
+                                <div class="chip-group" id="surface-finish-chips">
+                                    <button class="chip-btn active" data-finish="Raw">Raw</button>
+                                    <button class="chip-btn" data-finish="Sand Blasted">Sand Blasted</button>
+                                    <button class="chip-btn" data-finish="Vapor Smoothed">Vapor Smoothed</button>
+                                    <button class="chip-btn" data-finish="Anodized">Anodized</button>
+                                </div>
+                            </div>
+
+                            <div class="config-form-group">
+                                <label for="config-qty">Quantity</label>
+                                <div style="display:flex; align-items:center; gap: 12px;">
+                                    <input type="number" id="config-qty" class="settings-input" style="width: 100px; background:var(--bg-main);" value="1" min="1" max="100">
+                                    <span id="bulk-discount-label" style="font-size:0.8rem; font-weight:600; color:var(--success);"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Visualizer & Estimator -->
+                        <div>
+                            <div class="visualizer-card">
+                                <div class="visualizer-canvas-container" id="visualizer-container">
+                                    <span class="canvas-label">3D PREVIEW</span>
+                                    <div class="visualizer-stats" id="model-stats">
+                                        Dimensions: 40 x 40 x 40 mm<br>
+                                        Volume: 64 cm³<br>
+                                        Estimated Weight: 15g
+                                    </div>
+                                    <div class="visualizer-controls">
+                                        <button class="vis-control-btn" id="vis-zoom-in" title="Zoom In"><i class="fas fa-plus"></i></button>
+                                        <button class="vis-control-btn" id="vis-zoom-out" title="Zoom Out"><i class="fas fa-minus"></i></button>
+                                        <button class="vis-control-btn" id="vis-rotate" title="Toggle Rotation"><i class="fas fa-sync-alt"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="price-details-card">
+                                <h3 class="config-section-title" style="margin-bottom:12px; border-bottom:none; padding-bottom:0;"><i class="fas fa-calculator"></i> Price Estimate</h3>
+                                
+                                <div class="price-row">
+                                    <span>Base Setup Fee</span>
+                                    <span>$5.00</span>
+                                </div>
+                                <div class="price-row">
+                                    <span>Material Cost</span>
+                                    <span id="price-material">$0.00</span>
+                                </div>
+                                <div class="price-row">
+                                    <span>Resolution Multiplier</span>
+                                    <span id="price-resolution">1.0x</span>
+                                </div>
+                                <div class="price-row">
+                                    <span>Finish Premium</span>
+                                    <span id="price-finish">$0.00</span>
+                                </div>
+                                <div class="price-row">
+                                    <span>Quantity Discount</span>
+                                    <span id="price-discount">0%</span>
+                                </div>
+                                <div class="price-row total">
+                                    <span>Estimated Total</span>
+                                    <span id="price-total">$0.00</span>
+                                </div>
+                                
+                                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:12px; display:flex; flex-direction:column; gap:4px;">
+                                    <div><i class="fas fa-truck"></i> Est. Shipping: <strong id="est-shipping-date">May 25, 2026</strong></div>
+                                    <div><i class="fas fa-hourglass-half"></i> Est. Production: <strong id="est-production-time">12 hours</strong></div>
+                                </div>
+
+                                <button class="btn-primary" id="btn-place-order" style="width:100%; margin-top:16px; padding:14px;"><i class="fas fa-shopping-cart"></i> Place Order</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- ══ TAB 4: MATERIALS ══ -->
             <div class="tab-page" id="page-materials">
-                <div class="placeholder-page">
-                    <div class="placeholder-icon"><i class="fas fa-layer-group"></i></div>
-                    <h2>Materials Library</h2>
-                    <p>Browse our full library of 45+ materials including carbon fiber, titanium, resins, and polymers.
-                    </p>
-                    <a href="services.html" class="btn-primary">Browse Services</a>
+                <div class="materials-search-row">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="materials-search-input" placeholder="Search materials (e.g. Titanium, Resin, PLA)...">
+                    </div>
+                    <div class="chip-group" id="materials-filter-chips">
+                        <button class="chip-btn active" data-filter="all">All</button>
+                        <button class="chip-btn" data-filter="plastics">Plastics & Polymers</button>
+                        <button class="chip-btn" data-filter="metals">Metals</button>
+                        <button class="chip-btn" data-filter="resins">Resins & Composites</button>
+                    </div>
+                </div>
+                
+                <div class="material-cards-grid" id="materials-grid-container">
+                    <!-- Material cards will be rendered dynamically by JavaScript -->
                 </div>
             </div>
 
             <!-- ══ TAB 5: SETTINGS ══ -->
             <div class="tab-page" id="page-settings">
-                <div class="placeholder-page">
-                    <div class="placeholder-icon"><i class="fas fa-sliders-h"></i></div>
-                    <h2>Account Settings</h2>
-                    <p>Manage your profile, billing, notifications, and security preferences.</p>
-                    <button class="btn-primary"><i class="fas fa-edit"></i> Edit Profile</button>
+                <div class="settings-grid">
+                    <!-- Left: Profile Details -->
+                    <div class="config-card">
+                        <h3 class="config-section-title"><i class="fas fa-user-cog"></i> Profile Settings</h3>
+                        <form id="profile-settings-form" onsubmit="event.preventDefault(); alert('Profile updated successfully!');">
+                            <div class="form-row-2">
+                                <div class="config-form-group">
+                                    <label for="profile-first">First Name</label>
+                                    <input type="text" id="profile-first" class="settings-input" value="Marcus">
+                                </div>
+                                <div class="config-form-group">
+                                    <label for="profile-last">Last Name</label>
+                                    <input type="text" id="profile-last" class="settings-input" value="Thorne">
+                                </div>
+                            </div>
+                            <div class="config-form-group">
+                                <label for="profile-email">Email Address</label>
+                                <input type="email" id="profile-email" class="settings-input" value="marcus.thorne@nexustech.io" disabled style="opacity:0.7;">
+                            </div>
+                            <div class="config-form-group">
+                                <label for="profile-phone">Phone Number</label>
+                                <input type="text" id="profile-phone" class="settings-input" value="+1 (555) 234-5678">
+                            </div>
+                            <div class="config-form-group">
+                                <label for="profile-company">Company</label>
+                                <input type="text" id="profile-company" class="settings-input" value="Nexus Tech Solutions">
+                            </div>
+                            <button type="submit" class="btn-primary" style="margin-top:10px;"><i class="fas fa-save"></i> Save Changes</button>
+                        </form>
+                    </div>
+
+                    <!-- Right: API & Notifications -->
+                    <div style="display:flex; flex-direction:column; gap:24px;">
+                        <!-- API Key -->
+                        <div class="config-card">
+                            <h3 class="config-section-title"><i class="fas fa-key"></i> API Access</h3>
+                            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.4;">Generate an API key to upload and print designs directly from your CAD tools or pipeline.</p>
+                            <div class="api-key-container">
+                                <div class="api-key-box" id="api-key-display">••••••••••••••••••••••••••••••••</div>
+                                <button class="vis-control-btn" id="btn-generate-api" title="Generate API Key" style="width:42px; height:42px; font-size:0.95rem; border-radius:10px;"><i class="fas fa-sync-alt"></i></button>
+                                <button class="vis-control-btn" id="btn-copy-api" title="Copy Key" style="width:42px; height:42px; font-size:0.95rem; border-radius:10px;" disabled><i class="fas fa-copy"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Email Settings -->
+                        <div class="config-card">
+                            <h3 class="config-section-title"><i class="fas fa-bell"></i> Notifications</h3>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked>
+                                    <span>Email when print starts</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked>
+                                    <span>Email when order status changes</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox">
+                                    <span>Monthly production reports</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked>
+                                    <span>System maintenance alerts</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1355,7 +2350,11 @@
             const isRtl = html.getAttribute('dir') === 'rtl';
             const newDir = isRtl ? 'ltr' : 'rtl';
             html.setAttribute('dir', newDir);
-            document.getElementById('rtl-toggle-sidebar').textContent = newDir.toUpperCase();
+            
+            // Update all direction toggle buttons if multiple exist
+            const btns = [document.getElementById('rtl-toggle-sidebar'), document.getElementById('rtl-toggle-header')];
+            btns.forEach(btn => { if(btn) btn.textContent = newDir.toUpperCase(); });
+            
             localStorage.setItem('dir', newDir);
         }
 
@@ -1376,9 +2375,11 @@
         const savedDir = localStorage.getItem('dir');
         if (savedDir) {
             document.documentElement.setAttribute('dir', savedDir);
-            document.getElementById('rtl-toggle-sidebar').textContent = savedDir.toUpperCase();
+            const btns = [document.getElementById('rtl-toggle-sidebar'), document.getElementById('rtl-toggle-header')];
+            btns.forEach(btn => { if(btn) btn.textContent = savedDir.toUpperCase(); });
         } else {
-            document.getElementById('rtl-toggle-sidebar').textContent = 'LTR';
+            const btns = [document.getElementById('rtl-toggle-sidebar'), document.getElementById('rtl-toggle-header')];
+            btns.forEach(btn => { if(btn) btn.textContent = 'LTR'; });
         }
 
         /* ════════════════════════════════════
@@ -1612,8 +2613,1170 @@
             });
         }
 
-        window.addEventListener('load', initCharts);
+        // =========================================================================
+        // ── 3D PRINT CONFIGURATOR, LOCALSTORAGE ORDERS & DASHBOARD SYSTEM LOGIC ──
+        // =========================================================================
+
+        const MATERIALS_DB = {
+            pla: {
+                name: "PLA+",
+                rate: 0.15,
+                category: "plastics",
+                colors: [
+                    { name: "Matte Black", hex: "#1a1a1a" },
+                    { name: "Glossy White", hex: "#f5f5f7" },
+                    { name: "Ruby Red", hex: "#dc2626" },
+                    { name: "Cobalt Blue", hex: "#2563eb" }
+                ],
+                strength: 50,
+                flexibility: 30,
+                temp: 45,
+                desc: "The most popular, user-friendly material. Provides excellent surface detail and is biodegradable."
+            },
+            carbon: {
+                name: "Carbon Fiber",
+                rate: 0.45,
+                category: "plastics",
+                colors: [
+                    { name: "Dark Gray", hex: "#2d3748" },
+                    { name: "Stealth Black", hex: "#0f172a" }
+                ],
+                strength: 85,
+                flexibility: 10,
+                temp: 75,
+                desc: "Carbon-reinforced filament offering high structural rigidity, low weight, and matte textured finish."
+            },
+            titanium: {
+                name: "Liquid Titanium",
+                rate: 1.20,
+                category: "metals",
+                colors: [
+                    { name: "Metallic Silver", hex: "#cbd5e1" },
+                    { name: "Chrome Gold", hex: "#fbbf24" },
+                    { name: "Anodized Blue", hex: "#3b82f6" }
+                ],
+                strength: 98,
+                flexibility: 15,
+                temp: 95,
+                desc: "Super-alloy with unmatched strength-to-weight ratio. Ideal for aerospace, medical, and high-stress mechanical parts."
+            },
+            resin: {
+                name: "Crystalline Resin",
+                rate: 0.55,
+                category: "resins",
+                colors: [
+                    { name: "Clear Glass", hex: "#ffffff" },
+                    { name: "Translucent Emerald", hex: "#10b981" },
+                    { name: "Translucent Amber", hex: "#f59e0b" }
+                ],
+                strength: 60,
+                flexibility: 25,
+                temp: 55,
+                desc: "High-resolution liquid photopolymer that cures under UV light to produce transparent, glass-like parts."
+            },
+            peek: {
+                name: "High-Temp PEEK",
+                rate: 0.95,
+                category: "plastics",
+                colors: [
+                    { name: "Industrial Tan", hex: "#d97706" },
+                    { name: "Sand Beige", hex: "#f59e0b" }
+                ],
+                strength: 90,
+                flexibility: 20,
+                temp: 98,
+                desc: "Advanced semi-crystalline polymer with exceptional thermal resistance and high mechanical load capacity."
+            },
+            ceramic: {
+                name: "Bio-Ceramic",
+                rate: 0.85,
+                category: "resins",
+                colors: [
+                    { name: "Matte Alabaster", hex: "#fafafa" },
+                    { name: "Ivory White", hex: "#fef3c7" }
+                ],
+                strength: 70,
+                flexibility: 5,
+                temp: 90,
+                desc: "Matte white dental/biocompatible ceramic material. Extremely rigid and temperature resistant."
+            }
+        };
+
+        // Orders Database Initializer
+        function initOrdersDB() {
+            let orders = localStorage.getItem('orders_db');
+            if (!orders) {
+                const initialOrders = [
+                    {
+                        id: "#PRO-4821",
+                        name: "Turbine Housing v3",
+                        material: "Carbon Fiber",
+                        color: "Stealth Black",
+                        infill: "40%",
+                        layerHeight: "0.10mm",
+                        finish: "Raw",
+                        qty: 1,
+                        weight: 345,
+                        price: 1240.00,
+                        date: "Apr 10, 2026",
+                        status: "Printing"
+                    },
+                    {
+                        id: "#PRO-4819",
+                        name: "Dental Guide Set",
+                        material: "Crystalline Resin",
+                        color: "Clear Glass",
+                        infill: "100%",
+                        layerHeight: "0.05mm",
+                        finish: "Vapor Smoothed",
+                        qty: 2,
+                        weight: 45,
+                        price: 95.00,
+                        date: "Apr 7, 2026",
+                        status: "Delivered"
+                    },
+                    {
+                        id: "#PRO-4803",
+                        name: "Medical Implant",
+                        material: "High-Temp PEEK",
+                        color: "Industrial Tan",
+                        infill: "80%",
+                        layerHeight: "0.10mm",
+                        finish: "Raw",
+                        qty: 1,
+                        weight: 120,
+                        price: 0.00,
+                        date: "Apr 2, 2026",
+                        status: "Cancelled"
+                    }
+                ];
+                localStorage.setItem('orders_db', JSON.stringify(initialOrders));
+            }
+        }
+
+        // Cache elements
+        const elements = {
+            overviewTbody: document.getElementById('overview-orders-tbody'),
+            ordersListWrapper: document.getElementById('orders-list-wrapper'),
+            
+            // Configurator inputs
+            configName: document.getElementById('config-name'),
+            configMaterial: document.getElementById('config-material'),
+            configColorContainer: document.getElementById('color-picker-container'),
+            configColorName: document.getElementById('selected-color-name'),
+            configScale: document.getElementById('config-scale'),
+            configInfill: document.getElementById('config-infill'),
+            scaleValue: document.getElementById('scale-value'),
+            infillValue: document.getElementById('infill-value'),
+            dimensionsDisplay: document.getElementById('dimensions-display'),
+            qtyInput: document.getElementById('config-qty'),
+            bulkDiscountLabel: document.getElementById('bulk-discount-label'),
+            
+            // Chips
+            lhChips: document.querySelectorAll('#layer-height-chips .chip-btn'),
+            finishChips: document.querySelectorAll('#surface-finish-chips .chip-btn'),
+            
+            // Upload states
+            dashDropZone: document.getElementById('dash-drop-zone'),
+            dashFileInput: document.getElementById('dash-file-input'),
+            uploadState: document.getElementById('config-upload-state'),
+            analysisState: document.getElementById('config-analysis-state'),
+            activeState: document.getElementById('config-active-state'),
+            loadedFileName: document.getElementById('loaded-file-name'),
+            loadedFileSize: document.getElementById('loaded-file-size'),
+            btnRemoveFile: document.getElementById('btn-remove-file'),
+            analysisProgress: document.getElementById('analysis-progress'),
+            
+            // Price Estimator Card
+            priceMaterial: document.getElementById('price-material'),
+            priceResolution: document.getElementById('price-resolution'),
+            priceFinish: document.getElementById('price-finish'),
+            priceDiscount: document.getElementById('price-discount'),
+            priceTotal: document.getElementById('price-total'),
+            estShippingDate: document.getElementById('est-shipping-date'),
+            estProductionTime: document.getElementById('est-production-time'),
+            btnPlaceOrder: document.getElementById('btn-place-order'),
+            modelStats: document.getElementById('model-stats'),
+            
+            // Modal
+            successModal: document.getElementById('success-modal-overlay'),
+            modalOrderId: document.getElementById('modal-order-id'),
+            btnModalClose: document.getElementById('btn-modal-close'),
+            
+            // Materials tab
+            materialsGrid: document.getElementById('materials-grid-container'),
+            materialsSearch: document.getElementById('materials-search-input'),
+            materialsChips: document.querySelectorAll('#materials-filter-chips .chip-btn'),
+            
+            // Settings
+            btnGenerateApi: document.getElementById('btn-generate-api'),
+            btnCopyApi: document.getElementById('btn-copy-api'),
+            apiKeyDisplay: document.getElementById('api-key-display'),
+        };
+
+        // Active State variables
+        let activeFile = null;
+        let baseVolume = 64; // cm³ default
+        let baseDimensions = { x: 40, y: 40, z: 40 }; // mm default
+        let selectedColor = "";
+        let selectedLh = "0.20";
+        let selectedFinish = "Raw";
+
+        // Three.js visualizer variables
+        let scene, camera, renderer, controls, activeMesh;
+        let isRotating = true;
+
+        // Ensure we assign Overview tbody ID
+        const rawTbody = document.querySelector('.orders-table tbody');
+        if (rawTbody && !elements.overviewTbody) {
+            rawTbody.id = 'overview-orders-tbody';
+            elements.overviewTbody = rawTbody;
+        }
+
+        // ── 2. Three.js Engine Setup ──
+        function initThreeJS() {
+            const container = document.getElementById('visualizer-container');
+            if (!container) return;
+
+            // Dimensions
+            const width = container.clientWidth;
+            const height = container.clientHeight || 350;
+
+            // Scene
+            scene = new THREE.Scene();
+            scene.background = null; // show radial gradient from container CSS
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+            camera.position.set(0, 10, 20);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            
+            // Clear any old canvas
+            const oldCanvas = container.querySelector('canvas');
+            if (oldCanvas) oldCanvas.remove();
+            
+            container.appendChild(renderer.domElement);
+
+            // OrbitControls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxPolarAngle = Math.PI / 2; // block view under floor
+            controls.minDistance = 6;
+            controls.maxDistance = 50;
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
+
+            const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight1.position.set(10, 20, 15);
+            scene.add(dirLight1);
+
+            const dirLight2 = new THREE.DirectionalLight(0x6366f1, 0.5); // primary color spotlight
+            dirLight2.position.set(-15, -15, -15);
+            scene.add(dirLight2);
+
+            const pointLight = new THREE.PointLight(0xffffff, 0.6, 50);
+            pointLight.position.set(0, 8, 8);
+            scene.add(pointLight);
+
+            // Floor Grid Helper
+            const gridHelper = new THREE.GridHelper(40, 40, 0x6366f1, 0xe2e8f0);
+            gridHelper.position.y = -5;
+            gridHelper.material.opacity = 0.25;
+            gridHelper.material.transparent = true;
+            scene.add(gridHelper);
+
+            // Create geometry
+            createDefaultGeometry();
+
+            // Resize listener
+            window.removeEventListener('resize', onWindowResize);
+            window.addEventListener('resize', onWindowResize);
+
+            // Control Buttons setup
+            document.getElementById('vis-zoom-in').onclick = () => {
+                if (camera) camera.position.multiplyScalar(0.85);
+            };
+            document.getElementById('vis-zoom-out').onclick = () => {
+                if (camera) camera.position.multiplyScalar(1.15);
+            };
+            document.getElementById('vis-rotate').onclick = (e) => {
+                isRotating = !isRotating;
+                e.currentTarget.style.color = isRotating ? '' : 'var(--text-muted)';
+            };
+
+            // Start animation loop
+            animate();
+        }
+
+        function createDefaultGeometry() {
+            // Render a high-tech turbine knot shape
+            const geometry = new THREE.TorusKnotGeometry(3.2, 1.0, 150, 16, 3, 4);
+            
+            // Standard material
+            const material = new THREE.MeshStandardMaterial({
+                color: 0x6366f1,
+                roughness: 0.4,
+                metalness: 0.2
+            });
+
+            activeMesh = new THREE.Mesh(geometry, material);
+            activeMesh.position.y = 0;
+            activeMesh.castShadow = true;
+            activeMesh.receiveShadow = true;
+            scene.add(activeMesh);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (activeMesh && isRotating) {
+                activeMesh.rotation.y += 0.005;
+                activeMesh.rotation.x += 0.002;
+            }
+
+            if (controls) controls.update();
+            if (renderer && scene && camera) renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('visualizer-container');
+            if (!container || !camera || !renderer) return;
+
+            const width = container.clientWidth;
+            const height = container.clientHeight || 350;
+
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        // Procedural bump map for Carbon Fiber texture
+        let carbonTexture = null;
+        function getCarbonTexture() {
+            if (carbonTexture) return carbonTexture;
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#222222';
+            ctx.fillRect(0, 0, 64, 64);
+            ctx.fillStyle = '#444444';
+            for (let i = 0; i < 64; i += 8) {
+                for (let j = 0; j < 64; j += 8) {
+                    if ((i + j) % 16 === 0) {
+                        ctx.fillRect(i, j, 4, 8);
+                    } else {
+                        ctx.fillRect(i, j + 4, 8, 4);
+                    }
+                }
+            }
+            carbonTexture = new THREE.CanvasTexture(canvas);
+            carbonTexture.wrapS = THREE.RepeatWrapping;
+            carbonTexture.wrapT = THREE.RepeatWrapping;
+            carbonTexture.repeat.set(5, 5);
+            return carbonTexture;
+        }
+
+        function updateThreeMaterial(materialKey, colorHex) {
+            if (!activeMesh) return;
+            
+            const mat = activeMesh.material;
+            
+            // Clean texture maps
+            mat.bumpMap = null;
+            mat.roughnessMap = null;
+            
+            const color = new THREE.Color(colorHex);
+            mat.color = color;
+
+            switch (materialKey) {
+                case 'pla':
+                    mat.roughness = 0.35;
+                    mat.metalness = 0.05;
+                    mat.transparent = false;
+                    mat.opacity = 1.0;
+                    mat.transmission = 0;
+                    mat.clearcoat = 0.1;
+                    break;
+                case 'carbon':
+                    mat.roughness = 0.8;
+                    mat.metalness = 0.1;
+                    mat.transparent = false;
+                    mat.opacity = 1.0;
+                    mat.transmission = 0;
+                    mat.clearcoat = 0;
+                    mat.bumpMap = getCarbonTexture();
+                    mat.bumpScale = 0.08;
+                    break;
+                case 'titanium':
+                    mat.roughness = 0.15;
+                    mat.metalness = 0.95;
+                    mat.transparent = false;
+                    mat.opacity = 1.0;
+                    mat.transmission = 0;
+                    mat.clearcoat = 0.8;
+                    break;
+                case 'resin':
+                    mat.roughness = 0.05;
+                    mat.metalness = 0.02;
+                    mat.transparent = true;
+                    mat.opacity = 0.5;
+                    mat.transmission = 0.9;
+                    mat.clearcoat = 1.0;
+                    break;
+                case 'peek':
+                    mat.roughness = 0.7;
+                    mat.metalness = 0.1;
+                    mat.transparent = false;
+                    mat.opacity = 1.0;
+                    mat.transmission = 0;
+                    mat.clearcoat = 0;
+                    break;
+                case 'ceramic':
+                    mat.roughness = 0.9;
+                    mat.metalness = 0.01;
+                    mat.transparent = false;
+                    mat.opacity = 1.0;
+                    mat.transmission = 0;
+                    mat.clearcoat = 0;
+                    break;
+            }
+            
+            mat.needsUpdate = true;
+        }
+
+        // Color Dots Population
+        function populateColors(materialKey, selectColorName = null) {
+            const material = MATERIALS_DB[materialKey];
+            if (!material || !elements.configColorContainer) return;
+
+            elements.configColorContainer.innerHTML = '';
+            
+            material.colors.forEach((color, idx) => {
+                const dot = document.createElement('div');
+                dot.className = 'color-dot';
+                dot.style.backgroundColor = color.hex;
+                dot.title = color.name;
+                
+                // Active state check
+                const isSelected = selectColorName ? (color.name.toLowerCase() === selectColorName.toLowerCase()) : (idx === 0);
+                if (isSelected) {
+                    dot.classList.add('active');
+                    selectedColor = color.name;
+                    elements.configColorName.textContent = color.name;
+                    updateThreeMaterial(materialKey, color.hex);
+                }
+
+                dot.addEventListener('click', () => {
+                    document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+                    dot.classList.add('active');
+                    selectedColor = color.name;
+                    elements.configColorName.textContent = color.name;
+                    updateThreeMaterial(materialKey, color.hex);
+                });
+
+                elements.configColorContainer.appendChild(dot);
+            });
+        }
+
+        // Dynamic Calculations
+        function calculateEstimates() {
+            const materialKey = elements.configMaterial.value;
+            const material = MATERIALS_DB[materialKey];
+            if (!material) return;
+
+            const scale = parseInt(elements.configScale.value) || 100;
+            const infill = parseInt(elements.configInfill.value) || 20;
+            const qty = parseInt(elements.qtyInput.value) || 1;
+
+            let density = 1.24; // g/cm³
+            if (materialKey === 'titanium') density = 4.5;
+            else if (materialKey === 'carbon') density = 1.4;
+            else if (materialKey === 'resin') density = 1.15;
+            else if (materialKey === 'peek') density = 1.3;
+            else if (materialKey === 'ceramic') density = 2.2;
+
+            const scaleFactor = scale / 100;
+            const volume = baseVolume * Math.pow(scaleFactor, 3);
+            const infillFactor = (infill / 100) * 0.8 + 0.2;
+            const weight = volume * density * infillFactor;
+
+            // Scale mesh in visualizer
+            if (activeMesh) {
+                activeMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
+            }
+
+            // Dimension updates
+            const dimX = Math.round(baseDimensions.x * scaleFactor);
+            const dimY = Math.round(baseDimensions.y * scaleFactor);
+            const dimZ = Math.round(baseDimensions.z * scaleFactor);
+            elements.dimensionsDisplay.textContent = `${dimX} x ${dimY} x ${dimZ} mm`;
+            
+            const totalWeight = Math.round(weight * qty);
+            elements.modelStats.innerHTML = `Dimensions: ${dimX} x ${dimY} x ${dimZ} mm<br>Volume: ${Math.round(volume)} cm³<br>Estimated Weight: ${totalWeight}g`;
+
+            // Setup and Pricing Formula
+            const baseSetup = 5.00;
+            const materialCost = weight * material.rate * qty;
+            
+            let resolutionMult = 1.0;
+            if (selectedLh === '0.05') resolutionMult = 1.5;
+            else if (selectedLh === '0.10') resolutionMult = 1.2;
+
+            let finishPremium = 0.00;
+            if (selectedFinish === 'Sand Blasted') finishPremium = 8.00 * qty;
+            else if (selectedFinish === 'Vapor Smoothed') finishPremium = 12.00 * qty;
+            else if (selectedFinish === 'Anodized') {
+                finishPremium = (materialKey === 'titanium' ? 18.00 : 25.00) * qty;
+            }
+
+            const subtotal = (baseSetup + materialCost) * resolutionMult + finishPremium;
+
+            // Discount rates
+            let discountPercent = 0;
+            if (qty >= 20) discountPercent = 30;
+            else if (qty >= 10) discountPercent = 20;
+            else if (qty >= 5) discountPercent = 10;
+
+            const discountAmount = subtotal * (discountPercent / 100);
+            const total = subtotal - discountAmount;
+
+            // Update card labels
+            elements.priceMaterial.textContent = `$${materialCost.toFixed(2)}`;
+            elements.priceResolution.textContent = `${resolutionMult.toFixed(1)}x`;
+            elements.priceFinish.textContent = `$${finishPremium.toFixed(2)}`;
+            elements.priceDiscount.textContent = `${discountPercent}%`;
+            elements.priceTotal.textContent = `$${total.toFixed(2)}`;
+
+            elements.bulkDiscountLabel.textContent = discountPercent > 0 ? `(${discountPercent}% Bulk Discount Applied)` : '';
+
+            // Print time: base 4 hrs + dynamic slicing factor
+            let printHours = 4 + (volume * infillFactor * 0.15 * qty) / (parseFloat(selectedLh) / 0.2);
+            printHours = Math.max(2, Math.round(printHours));
+            elements.estProductionTime.textContent = `${printHours} hours`;
+
+            const shippingDays = Math.ceil(printHours / 24) + 2;
+            const shipDate = new Date();
+            shipDate.setDate(shipDate.getDate() + shippingDays);
+            
+            elements.estShippingDate.textContent = shipDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+            return {
+                weight: totalWeight,
+                price: parseFloat(total.toFixed(2)),
+                printHours: printHours,
+                estShipping: shipDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+            };
+        }
+
+        function setupConfiguratorListeners() {
+            elements.configMaterial.addEventListener('change', (e) => {
+                populateColors(e.target.value);
+                calculateEstimates();
+            });
+
+            elements.configScale.addEventListener('input', (e) => {
+                elements.scaleValue.textContent = `${e.target.value}%`;
+                calculateEstimates();
+            });
+
+            elements.configInfill.addEventListener('input', (e) => {
+                elements.infillValue.textContent = `${e.target.value}%`;
+                calculateEstimates();
+            });
+
+            elements.qtyInput.addEventListener('input', () => {
+                calculateEstimates();
+            });
+
+            elements.lhChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    elements.lhChips.forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    selectedLh = chip.dataset.lh;
+                    calculateEstimates();
+                });
+            });
+
+            elements.finishChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    elements.finishChips.forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    selectedFinish = chip.dataset.finish;
+                    calculateEstimates();
+                });
+            });
+
+            elements.btnRemoveFile.addEventListener('click', () => {
+                activeFile = null;
+                elements.activeState.style.display = 'none';
+                elements.uploadState.style.display = 'block';
+                elements.configName.value = "Custom 3D Design";
+            });
+
+            elements.btnPlaceOrder.addEventListener('click', handlePlaceOrder);
+        }
+
+        // File Uploader Setup
+        function setupUploader() {
+            if (!elements.dashDropZone) return;
+
+            elements.dashDropZone.addEventListener('click', () => elements.dashFileInput.click());
+            
+            elements.dashFileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    processUploadedFile(e.target.files[0]);
+                }
+            });
+
+            elements.dashDropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                elements.dashDropZone.style.borderColor = 'var(--primary)';
+                elements.dashDropZone.style.background = 'var(--primary-glow)';
+            });
+
+            ['dragleave', 'drop'].forEach(ev => {
+                elements.dashDropZone.addEventListener(ev, (e) => {
+                    e.preventDefault();
+                    elements.dashDropZone.style.borderColor = '';
+                    elements.dashDropZone.style.background = '';
+                });
+            });
+
+            elements.dashDropZone.addEventListener('drop', (e) => {
+                if (e.dataTransfer.files.length > 0) {
+                    processUploadedFile(e.dataTransfer.files[0]);
+                }
+            });
+        }
+
+        function processUploadedFile(file, preConfigData = null) {
+            activeFile = file;
+            elements.uploadState.style.display = 'none';
+            elements.analysisState.style.display = 'block';
+            elements.analysisProgress.style.width = '0%';
+            
+            const steps = [
+                { progress: 25, status: "Parsing mesh data...", sub: "Verifying watertight geometry..." },
+                { progress: 55, status: "Calculating volume...", sub: "Measuring bounding box dimensions..." },
+                { progress: 85, status: "Running slicing simulation...", sub: "Checking layer stress models..." },
+                { progress: 100, status: "Analysis Complete!", sub: "Generating interactive preview..." }
+            ];
+
+            let stepIdx = 0;
+            const timer = setInterval(() => {
+                if (stepIdx < steps.length) {
+                    const step = steps[stepIdx];
+                    elements.analysisProgress.style.width = `${step.progress}%`;
+                    document.getElementById('analysis-status').textContent = step.status;
+                    document.getElementById('analysis-subtext').textContent = step.sub;
+                    stepIdx++;
+                } else {
+                    clearInterval(timer);
+                    setTimeout(() => {
+                        elements.analysisState.style.display = 'none';
+                        elements.activeState.style.display = 'block';
+                        
+                        elements.loadedFileName.textContent = file.name;
+                        elements.loadedFileSize.textContent = `(${(file.size / (1024 * 1024)).toFixed(1)} MB)`;
+                        elements.configName.value = file.name.replace(/\.[^/.]+$/, "");
+                        
+                        // Deterministic dimensions from file name characters
+                        const seed = file.name.charCodeAt(0) || 75;
+                        baseVolume = (seed % 90) + 40;
+                        baseDimensions.x = (seed % 35) + 30;
+                        baseDimensions.y = ((seed + 8) % 35) + 30;
+                        baseDimensions.z = ((seed + 15) % 25) + 20;
+
+                        if (preConfigData) {
+                            elements.configMaterial.value = preConfigData.material || 'pla';
+                            elements.configInfill.value = Math.round((preConfigData.infill || 0.4) * 100);
+                            elements.infillValue.textContent = `${elements.configInfill.value}%`;
+                            elements.configScale.value = 100;
+                            elements.scaleValue.textContent = '100%';
+                        }
+
+                        // Start 3D Engine
+                        initThreeJS();
+
+                        // Populate materials settings
+                        populateColors(elements.configMaterial.value, preConfigData ? preConfigData.color : null);
+                        calculateEstimates();
+                    }, 250);
+                }
+            }, 300);
+        }
+
+        // Place Order Action
+        function handlePlaceOrder() {
+            if (!activeFile) return;
+
+            const estimates = calculateEstimates();
+            const orderId = "#PRO-" + Math.floor(1000 + Math.random() * 9000);
+            const materialVal = elements.configMaterial.value;
+            const materialName = MATERIALS_DB[materialVal].name;
+
+            const newOrder = {
+                id: orderId,
+                name: elements.configName.value || "Custom Part",
+                material: materialName,
+                color: selectedColor,
+                infill: `${elements.configInfill.value}%`,
+                layerHeight: `${selectedLh}mm`,
+                finish: selectedFinish,
+                qty: parseInt(elements.qtyInput.value) || 1,
+                weight: estimates.weight,
+                price: estimates.price,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                status: "Slicing"
+            };
+
+            const orders = JSON.parse(localStorage.getItem('orders_db') || '[]');
+            orders.unshift(newOrder);
+            localStorage.setItem('orders_db', JSON.stringify(orders));
+
+            // Load success modal details
+            elements.modalOrderId.textContent = orderId;
+            elements.successModal.classList.add('active');
+
+            // Refresh dashboards
+            renderOrdersList();
+            renderOverviewOrders();
+            updateOverviewStats();
+        }
+
+        // Stepper Timeline Close Button
+        if (elements.successModal) {
+            elements.btnModalClose.onclick = () => {
+                elements.successModal.classList.remove('active');
+                
+                // Clear configuration
+                activeFile = null;
+                elements.activeState.style.display = 'none';
+                elements.uploadState.style.display = 'block';
+                elements.configName.value = "Custom 3D Design";
+                
+                // Switch tab
+                switchTab('orders', document.getElementById('nav-orders'));
+            };
+        }
+
+        // Render My Orders List
+        function renderOrdersList() {
+            const wrapper = elements.ordersListWrapper;
+            if (!wrapper) return;
+
+            const orders = JSON.parse(localStorage.getItem('orders_db') || '[]');
+            if (orders.length === 0) {
+                wrapper.innerHTML = `
+                    <div class="placeholder-page">
+                        <div class="placeholder-icon"><i class="fas fa-box-open"></i></div>
+                        <h2>No Orders Placed</h2>
+                        <p>Track and manage all your 3D creations from here.</p>
+                        <button class="btn-primary" onclick="switchTab('upload', document.getElementById('nav-upload'))">Configure New Print</button>
+                    </div>
+                `;
+                return;
+            }
+
+            wrapper.innerHTML = '';
+            
+            orders.forEach((order, index) => {
+                const card = document.createElement('div');
+                card.className = `order-card ${index === 0 ? 'expanded' : ''}`;
+                
+                const isCancelled = order.status === 'Cancelled';
+                const priceFormatted = order.price > 0 ? `$${order.price.toLocaleString(undefined, {minimumFractionDigits: 2})}` : 'Cancelled';
+                
+                let badgeClass = 'pending';
+                if (order.status.toLowerCase() === 'printing') badgeClass = 'printing';
+                else if (order.status.toLowerCase() === 'delivered') badgeClass = 'delivered';
+                else if (order.status.toLowerCase() === 'cancelled') badgeClass = 'cancelled';
+                else if (order.status.toLowerCase() === 'slicing') badgeClass = 'printing';
+                else if (order.status.toLowerCase() === 'qc') badgeClass = 'pending';
+                else if (order.status.toLowerCase() === 'shipped') badgeClass = 'delivered';
+
+                let progressPercent = 0;
+                let stepsHTML = '';
+                
+                if (!isCancelled) {
+                    const stepDetails = [
+                        { name: "Uploaded", icon: "fas fa-cloud-upload-alt" },
+                        { name: "Slicing", icon: "fas fa-layer-group" },
+                        { name: "Printing", icon: order.status === 'Printing' ? "fas fa-spinner fa-spin" : "fas fa-print" },
+                        { name: "QC", icon: "fas fa-clipboard-check" },
+                        { name: "Delivered", icon: "fas fa-shipping-fast" }
+                    ];
+                    
+                    let activeStep = 0;
+                    if (order.status === 'Uploaded') activeStep = 0;
+                    else if (order.status === 'Slicing') activeStep = 1;
+                    else if (order.status === 'Printing') activeStep = 2;
+                    else if (order.status === 'QC') activeStep = 3;
+                    else if (order.status === 'Shipped' || order.status === 'Delivered') activeStep = 4;
+                    
+                    progressPercent = (activeStep / (stepDetails.length - 1)) * 100;
+                    
+                    stepDetails.forEach((step, sIdx) => {
+                        let stepNodeClass = '';
+                        if (sIdx < activeStep) stepNodeClass = 'completed';
+                        else if (sIdx === activeStep) stepNodeClass = 'active';
+                        
+                        stepsHTML += `
+                            <div class="step-node ${stepNodeClass}">
+                                <div class="step-icon"><i class="${step.icon}"></i></div>
+                                <div class="step-label">${step.name}</div>
+                            </div>
+                        `;
+                    });
+                }
+
+                card.innerHTML = `
+                    <div class="order-card-header" style="cursor:pointer; display: flex; justify-content: space-between; padding: 20px;">
+                        <div>
+                            <strong style="font-size:1.05rem; color:var(--text-main);">${order.name}</strong>
+                            <span style="color:var(--text-muted); margin-left:12px; font-size:0.85rem;">ID: ${order.id}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:16px;">
+                            <span style="font-weight:700; color:var(--text-main);">${priceFormatted}</span>
+                            <span class="status-badge ${badgeClass}"><i class="fas fa-circle" style="font-size:6px;"></i>${order.status}</span>
+                            <i class="fas fa-chevron-down toggle-arrow" style="transition: transform 0.3s; ${index === 0 ? 'transform: rotate(180deg);' : ''}"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="order-card-body" style="${index === 0 ? 'display:block;' : 'display:none;'} border-top: 1px solid var(--border); padding: 20px;">
+                        <div class="order-details-grid" style="margin-bottom: 24px;">
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Material & Color</span>
+                                <span class="order-detail-val">${order.material} (${order.color})</span>
+                            </div>
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Infill Density</span>
+                                <span class="order-detail-val">${order.infill}</span>
+                            </div>
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Layer Height</span>
+                                <span class="order-detail-val">${order.layerHeight}</span>
+                            </div>
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Finish</span>
+                                <span class="order-detail-val">${order.finish}</span>
+                            </div>
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Quantity</span>
+                                <span class="order-detail-val">${order.qty} unit(s)</span>
+                            </div>
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Est. Weight</span>
+                                <span class="order-detail-val">${order.weight}g</span>
+                            </div>
+                            <div class="order-detail-item">
+                                <span class="order-detail-label">Order Date</span>
+                                <span class="order-detail-val">${order.date}</span>
+                            </div>
+                        </div>
+                        
+                        ${isCancelled ? `
+                            <div style="background:rgba(244,63,94,0.06); border:1px solid rgba(244,63,94,0.15); border-radius:12px; padding:15px; display:flex; align-items:center; gap:12px; color:var(--accent);">
+                                <i class="fas fa-exclamation-triangle" style="font-size:1.2rem;"></i>
+                                <span style="font-size:0.85rem; font-weight:500;">This print order was cancelled due to model defects. No charges were billed.</span>
+                            </div>
+                        ` : `
+                            <div class="stepper-wrapper">
+                                <div class="stepper-progress" style="width: ${progressPercent}%;"></div>
+                                ${stepsHTML}
+                            </div>
+                        `}
+                    </div>
+                `;
+
+                card.querySelector('.order-card-header').onclick = () => {
+                    const body = card.querySelector('.order-card-body');
+                    const arrow = card.querySelector('.toggle-arrow');
+                    const isVisible = body.style.display === 'block';
+                    
+                    body.style.display = isVisible ? 'none' : 'block';
+                    arrow.style.transform = isVisible ? 'rotate(0deg)' : 'rotate(180deg)';
+                    card.classList.toggle('expanded', !isVisible);
+                };
+
+                wrapper.appendChild(card);
+            });
+        }
+
+        // Render Recent Overview Table Rows
+        function renderOverviewOrders() {
+            const tbody = elements.overviewTbody;
+            if (!tbody) return;
+
+            const orders = JSON.parse(localStorage.getItem('orders_db') || '[]');
+            tbody.innerHTML = '';
+
+            orders.slice(0, 4).forEach(order => {
+                const tr = document.createElement('tr');
+                
+                const isCancelled = order.status === 'Cancelled';
+                const priceFormatted = order.price > 0 ? `$${order.price.toLocaleString(undefined, {minimumFractionDigits: 0})}` : 'Cancelled';
+                
+                let badgeClass = 'pending';
+                if (order.status.toLowerCase() === 'printing') badgeClass = 'printing';
+                else if (order.status.toLowerCase() === 'delivered') badgeClass = 'delivered';
+                else if (order.status.toLowerCase() === 'cancelled') badgeClass = 'cancelled';
+                else if (order.status.toLowerCase() === 'slicing') badgeClass = 'printing';
+                else if (order.status.toLowerCase() === 'qc') badgeClass = 'pending';
+                else if (order.status.toLowerCase() === 'shipped') badgeClass = 'delivered';
+
+                tr.innerHTML = `
+                    <td><strong>${order.id}</strong></td>
+                    <td>${order.name}</td>
+                    <td>${order.material}</td>
+                    <td>${order.date}</td>
+                    <td><span class="status-badge ${badgeClass}"><i class="fas fa-circle" style="font-size:6px;"></i>${order.status}</span></td>
+                    <td><strong>${priceFormatted}</strong></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Update Overview Cards
+        function updateOverviewStats() {
+            const orders = JSON.parse(localStorage.getItem('orders_db') || '[]');
+            
+            const activeOrders = orders.filter(o => o.status !== 'Delivered' && o.status !== 'Cancelled').length;
+            const totalPrints = 2844 + orders.filter(o => o.status === 'Delivered' || o.status === 'Printing' || o.status === 'Slicing' || o.status === 'QC').length;
+
+            const activeOrdersVal = document.querySelector('.stats-grid .stat-card:nth-child(2) .stat-value');
+            if (activeOrdersVal) activeOrdersVal.textContent = activeOrders;
+
+            const totalPrintsVal = document.querySelector('.stats-grid .stat-card:nth-child(1) .stat-value');
+            if (totalPrintsVal) totalPrintsVal.textContent = totalPrints.toLocaleString();
+            
+            // Sidebar Badge update
+            const sidebarBadge = document.querySelector('#nav-orders .nav-badge');
+            if (sidebarBadge) {
+                sidebarBadge.textContent = activeOrders;
+                sidebarBadge.style.display = activeOrders > 0 ? 'inline-block' : 'none';
+            }
+        }
+
+        // Materials grid dynamic items
+        const MATERIALS_LIST = [
+            { key: 'titanium', name: 'Liquid Titanium', cat: 'metals', price: '$1.20/g', s: 98, f: 15, t: 95, desc: 'Super-alloy with unmatched strength-to-weight ratio. Ideal for aerospace, medical, and high-stress mechanical parts.' },
+            { key: 'carbon', name: 'Carbon Fiber', cat: 'plastics', price: '$0.45/g', s: 85, f: 10, t: 75, desc: 'Carbon-reinforced filament offering high structural rigidity, low weight, and matte textured finish.' },
+            { key: 'resin', name: 'Crystalline Resin', cat: 'resins', price: '$0.55/g', s: 60, f: 25, t: 55, desc: 'High-resolution liquid photopolymer that cures under UV light to produce transparent, glass-like parts.' },
+            { key: 'peek', name: 'High-Temp PEEK', cat: 'plastics', price: '$0.95/g', s: 90, f: 20, t: 98, desc: 'Advanced semi-crystalline polymer with exceptional thermal resistance and high mechanical load capacity.' },
+            { key: 'pla', name: 'PLA+', cat: 'plastics', price: '$0.15/g', s: 50, f: 30, t: 45, desc: 'The most popular, user-friendly material. Provides excellent surface detail and is biodegradable.' },
+            { key: 'ceramic', name: 'Bio-Ceramic', cat: 'resins', price: '$0.85/g', s: 70, f: 5, t: 90, desc: 'Matte white dental/biocompatible ceramic material. Extremely rigid and temperature resistant.' }
+        ];
+
+        function renderMaterials(filter = 'all', searchStr = '') {
+            const container = elements.materialsGrid;
+            if (!container) return;
+
+            container.innerHTML = '';
+            
+            const filtered = MATERIALS_LIST.filter(m => {
+                const matchesFilter = filter === 'all' || m.cat === filter;
+                const matchesSearch = m.name.toLowerCase().includes(searchStr.toLowerCase()) || 
+                                      m.desc.toLowerCase().includes(searchStr.toLowerCase());
+                return matchesFilter && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align:center; padding: 40px; color:var(--text-muted);">
+                        <i class="fas fa-search" style="font-size:2rem; margin-bottom:12px;"></i>
+                        <p>No materials match your search filters.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(m => {
+                const card = document.createElement('div');
+                card.className = 'material-card';
+                
+                card.innerHTML = `
+                    <div class="mat-card-header" style="padding: 20px;">
+                        <div>
+                            <h3 style="font-family:'Outfit'; font-weight:700;">${m.name}</h3>
+                            <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--text-muted);">${m.cat}</span>
+                        </div>
+                        <span class="mat-price-tag" style="font-family:'Outfit'; font-size:1.2rem; font-weight:800; color:var(--secondary);">${m.price}</span>
+                    </div>
+                    <div class="mat-card-body" style="padding: 20px;">
+                        <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.4; flex:1; margin-bottom: 16px;">${m.desc}</p>
+                        
+                        <div class="mat-property-row" style="margin-bottom:10px;">
+                            <div class="mat-property-info" style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:600; color:var(--text-muted);">
+                                <span>Tensile Strength</span>
+                                <span>${m.s}%</span>
+                            </div>
+                            <div class="mat-progress-bar" style="height:6px; background:var(--bg-main); border-radius:4px; overflow:hidden;">
+                                <div class="mat-progress-fill" style="width: ${m.s}%; height:100%; background:linear-gradient(90deg, var(--primary), var(--secondary));"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="mat-property-row" style="margin-bottom:10px;">
+                            <div class="mat-property-info" style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:600; color:var(--text-muted);">
+                                <span>Flexibility</span>
+                                <span>${m.f}%</span>
+                            </div>
+                            <div class="mat-progress-bar" style="height:6px; background:var(--bg-main); border-radius:4px; overflow:hidden;">
+                                <div class="mat-progress-fill" style="width: ${m.f}%; height:100%; background:linear-gradient(90deg, var(--primary), var(--secondary));"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="mat-property-row" style="margin-bottom:15px;">
+                            <div class="mat-property-info" style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:600; color:var(--text-muted);">
+                                <span>Thermal Resistance</span>
+                                <span>${m.t}%</span>
+                            </div>
+                            <div class="mat-progress-bar" style="height:6px; background:var(--bg-main); border-radius:4px; overflow:hidden;">
+                                <div class="mat-progress-fill" style="width: ${m.t}%; height:100%; background:linear-gradient(90deg, var(--primary), var(--secondary));"></div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn-primary btn-configure-mat" data-key="${m.key}" style="margin-top:10px; width:100%; text-align:center;">Configure Print</button>
+                    </div>
+                `;
+
+                card.querySelector('.btn-configure-mat').onclick = () => {
+                    elements.configMaterial.value = m.key;
+                    switchTab('upload', document.getElementById('nav-upload'));
+
+                    if (activeFile) {
+                        populateColors(m.key);
+                        calculateEstimates();
+                    } else {
+                        setTimeout(() => {
+                            alert(`Selected ${m.name}. Please choose/upload a CAD file to customize your print.`);
+                        }, 200);
+                    }
+                };
+
+                container.appendChild(card);
+            });
+        }
+
+        function setupMaterialsSearch() {
+            if (!elements.materialsSearch) return;
+
+            elements.materialsSearch.addEventListener('input', (e) => {
+                const activeFilter = document.querySelector('#materials-filter-chips .chip-btn.active').dataset.filter;
+                renderMaterials(activeFilter, e.target.value);
+            });
+
+            elements.materialsChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    elements.materialsChips.forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    
+                    const filter = chip.dataset.filter;
+                    const searchStr = elements.materialsSearch.value;
+                    renderMaterials(filter, searchStr);
+                });
+            });
+        }
+
+        // Settings API & Profile Controls
+        function setupSettingsAccess() {
+            if (!elements.btnGenerateApi) return;
+
+            elements.btnGenerateApi.addEventListener('click', () => {
+                const chars = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                let key = 'sk_prod_3d_';
+                for (let i = 0; i < 24; i++) {
+                    key += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                elements.apiKeyDisplay.textContent = key;
+                elements.btnCopyApi.removeAttribute('disabled');
+                elements.btnGenerateApi.innerHTML = '<i class="fas fa-redo-alt"></i>';
+            });
+
+            elements.btnCopyApi.addEventListener('click', () => {
+                const keyText = elements.apiKeyDisplay.textContent;
+                if (keyText.includes('•')) return;
+
+                navigator.clipboard.writeText(keyText).then(() => {
+                    const originalHTML = elements.btnCopyApi.innerHTML;
+                    elements.btnCopyApi.innerHTML = '<i class="fas fa-check" style="color:var(--success);"></i>';
+                    setTimeout(() => {
+                        elements.btnCopyApi.innerHTML = originalHTML;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Copy failed: ', err);
+                });
+            });
+        }
+
+        // Session checking
+        function checkMiniQuoteSession() {
+            const quoteStr = sessionStorage.getItem('mini_quote');
+            if (quoteStr) {
+                sessionStorage.removeItem('mini_quote');
+                try {
+                    const quote = JSON.parse(quoteStr);
+                    
+                    // Trigger tab
+                    switchTab('upload', document.getElementById('nav-upload'));
+                    
+                    const mockFile = {
+                        name: quote.filename || 'custom_bracket.stl',
+                        size: 2800000
+                    };
+
+                    processUploadedFile(mockFile, quote);
+                } catch(e) {
+                    console.error("Session data loading failure", e);
+                }
+            }
+        }
+
+        window.addEventListener('load', () => {
+            initCharts();
+            
+            // Start custom features
+            initOrdersDB();
+            renderOverviewOrders();
+            updateOverviewStats();
+            renderOrdersList();
+            renderMaterials();
+            setupConfiguratorListeners();
+            setupUploader();
+            setupMaterialsSearch();
+            setupSettingsAccess();
+            checkMiniQuoteSession();
+        });
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'orders_db') {
+                renderOverviewOrders();
+                updateOverviewStats();
+                renderOrdersList();
+            }
+        });
     </script>
+
+    <!-- Success Modal Overlay -->
+    <div class="modal-overlay" id="success-modal-overlay">
+        <div class="success-modal">
+            <div class="checkmark-circle">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2 style="font-family:'Outfit'; margin-bottom:10px; color: var(--text-main);">Order Placed!</h2>
+            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:24px; line-height: 1.4;">Your order <strong id="modal-order-id" style="color: var(--primary);">#PRO-1234</strong> has been successfully placed and sent to our print queue.</p>
+            <button class="btn-primary" style="margin-top:0; width:100%;" id="btn-modal-close">View My Orders</button>
+        </div>
+    </div>
 </body>
 
 </html>

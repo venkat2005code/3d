@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | 3DPrint Pro</title>
+    <meta name="description" content="Log in to your 3DPrint Pro client portal. Manage print queues, monitor active CAD synthesis, and check inventory.">
     <link rel="icon" type="image/svg+xml" href="logo-icon.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="index.css">
@@ -15,16 +16,20 @@
             align-items: center;
             justify-content: center;
             background: var(--bg-main);
-            background-image: radial-gradient(circle at top right, var(--primary-glow), transparent),
-                radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.1), transparent);
+            background-image: 
+                radial-gradient(circle at 10% 20%, var(--primary-glow), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.15), transparent 40%),
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
             position: relative;
             transition: var(--transition);
         }
 
         .auth-controls {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 30px;
+            right: 30px;
             display: flex;
             gap: 15px;
             z-index: 100;
@@ -34,15 +39,15 @@
             background: var(--bg-card);
             border: 1px solid var(--border);
             color: var(--text-main);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--shadow-sm);
             font-weight: 700;
             font-family: 'Outfit', sans-serif;
             font-size: 0.85rem;
@@ -53,22 +58,21 @@
             transform: translateY(-3px);
             border-color: var(--primary);
             color: var(--primary);
-            box-shadow: 0 8px 25px var(--primary-glow);
+            box-shadow: var(--shadow-glow);
         }
 
         .auth-container {
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
             padding: 20px;
-            animation: fadeIn 0.8s ease-out;
+            animation: fadeIn 0.8s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -78,43 +82,46 @@
         .auth-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            padding: 40px;
-            border-radius: 24px;
+            padding: 50px 40px;
+            border-radius: 32px;
             backdrop-filter: blur(20px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
         }
 
-        [data-theme="dark"] .auth-card {
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
 
         .auth-header {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 40px;
         }
 
         .auth-logo {
-            margin-bottom: 20px;
-        }
-
-        .auth-logo img {
-            height: 60px;
-            width: auto;
+            margin-bottom: 25px;
         }
 
         .auth-header h1 {
             font-family: 'Outfit', sans-serif;
-            font-size: 2rem;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, var(--text-main), var(--primary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+            color: var(--text-main);
         }
 
         .auth-header p {
             color: var(--text-muted);
-            font-size: 0.95rem;
+            font-size: 1rem;
+            max-width: 300px;
+            margin: 0 auto;
         }
 
         .form-group {
@@ -219,45 +226,67 @@
             text-decoration: underline;
         }
 
-        /* Mobile specific adjustments */
-        @media (max-width: 500px) {
-            .auth-card {
-                padding: 30px 20px;
-            }
-
-            .auth-header h1 {
-                font-size: 1.75rem;
-            }
+        .social-auth {
+            margin-top: 35px;
         }
 
-        /* Auth RTL Overrides */
-        [dir="rtl"] {
-            text-align: right;
+        .social-divider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
         }
 
-        [dir="rtl"] .auth-controls {
-            right: auto;
-            left: 20px;
-            flex-direction: row-reverse;
+        .social-divider::before,
+        .social-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
         }
 
-        [dir="rtl"] .form-group input {
-            padding: 14px 45px 14px 15px;
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
         }
 
-        [dir="rtl"] .input-wrapper i {
-            left: auto;
-            right: 15px;
+        .social-btn {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
         }
 
-        [dir="rtl"] .forgot-pass {
-            text-align: left;
+        .social-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--bg-card);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
+
+        .social-btn.google:hover { color: #DB4437; border-color: #DB4437; }
+        .social-btn.apple:hover { color: #000000; border-color: #000000; }
+        [data-theme="dark"] .social-btn.apple:hover { color: #ffffff; border-color: #ffffff; }
+        .social-btn.facebook:hover { color: #4267B2; border-color: #4267B2; }
 
     </style>
 </head>
 
-<body><div class="auth-controls"><button class="icon-btn" id="rtl-toggle" title="Switch RTL/LTR" onclick="toggleDir()">LTR</button><button class="icon-btn" id="theme-toggle" title="Toggle Theme" onclick="toggleTheme()"><i class="fas fa-moon" id="theme-icon"></i></button></div><div class="auth-container"><div class="auth-card"><div class="auth-header"><div class="auth-logo"><a href="index.html" class="logo" style="justify-content: center;"><img src="logo-icon.svg" alt="3DPrint Pro" class="logo-icon"><span class="logo-text">3DPrint <span class="text-accent">Pro</span></span></a></div><h1>Welcome Back</h1><p>Login to manage your 3D creations</p></div><form action="user-dashboard.html"><div class="form-group"><label for="email">Email Address</label><div class="input-wrapper"><input type="email" id="email" placeholder="name@company.com" required><i class="fas fa-envelope"></i></div></div><div class="form-group"><label for="password">Password</label><div class="input-wrapper"><input type="password" id="password" placeholder="••••••••" required><i class="fas fa-lock"></i></div></div><div class="forgot-pass"><a href="#">Forgot password?</a></div><button type="submit" class="auth-btn">Sign In</button></form><div class="auth-footer">Don't have an account? <a href="register.html">Create one</a>
+<body><div class="auth-controls"><button class="icon-btn" id="rtl-toggle" title="Switch RTL/LTR" onclick="toggleDir()">LTR</button><button class="icon-btn" id="theme-toggle" title="Toggle Theme" onclick="toggleTheme()"><i class="fas fa-moon" id="theme-icon"></i></button></div><div class="auth-container"><div class="auth-card"><div class="auth-header"><div class="auth-logo"><a href="index.html" class="logo" style="justify-content: center;"><img src="logo-icon.svg" alt="3DPrint Pro" class="logo-icon"><span class="logo-text">3DPrint <span class="text-accent">Pro</span></span></a></div><h1>Welcome Back</h1><p>Login to manage your 3D creations</p></div><form action="user-dashboard.html"><div class="form-group"><label for="email">Email Address</label><div class="input-wrapper"><input type="email" id="email" placeholder="name@company.com" required><i class="fas fa-envelope"></i></div></div><div class="form-group"><label for="password">Password</label><div class="input-wrapper"><input type="password" id="password" placeholder="••••••••" required><i class="fas fa-lock"></i></div></div><div class="forgot-pass"><a href="#">Forgot password?</a></div><button type="submit" class="auth-btn">Sign In</button></form><div class="social-auth"><div class="social-divider">Or continue with</div><div class="social-grid"><button class="social-btn google" title="Login with Google"><i class="fab fa-google"></i></button><button class="social-btn apple" title="Login with Apple"><i class="fab fa-apple"></i></button><button class="social-btn facebook" title="Login with Facebook"><i class="fab fa-facebook-f"></i></button></div></div><div class="auth-footer">Don't have an account? <a href="register.html">Create one</a>
  </div></div></div><script>function toggleTheme() {
             const html=document.documentElement;
             const currentTheme=html.getAttribute('data-theme');

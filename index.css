@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
 
 :root {
     /* Color Palette - Light Mode */
@@ -84,6 +84,16 @@ h4,
 .brand {
     font-family: 'Outfit', sans-serif;
     font-weight: 700;
+}
+
+h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
 }
 
 /* Glassmorphism Utilities */
@@ -413,6 +423,7 @@ nav {
     font-size: clamp(2.5rem, 8vw, 5rem);
     line-height: 1.1;
     margin-bottom: 24px;
+    font-weight: 600;
 }
 
 .hero p {
@@ -446,6 +457,7 @@ section {
 .section-title {
     font-size: clamp(2rem, 5vw, 3rem);
     color: var(--text-main);
+    font-weight: 500;
 }
 
 /* Grid Layouts */
@@ -1213,6 +1225,7 @@ footer {
     font-size: clamp(2.5rem, 5vw, 4.5rem) !important;
     line-height: 1.1;
     margin-bottom: 20px;
+    font-weight: 600;
 }
 
 .hero-info-panel p {
